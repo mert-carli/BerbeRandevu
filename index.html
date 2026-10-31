@@ -279,6 +279,13 @@
     .animate-fade-in {
       animation: fade-in 0.2s ease-out forwards;
     }
+
+    /* Standalone PWA / Ana Ekran Safe Area (Çentik & Durum Çubuğu Koruması) */
+    @media all and (display-mode: standalone) {
+      header.glass-header {
+        padding-top: calc(max(28px, env(safe-area-inset-top, 28px)) + 12px) !important;
+      }
+    }
   </style>
 </head>
 <body class="min-h-screen bg-[#08090c] text-zinc-100 antialiased selection:bg-amber-500 selection:text-zinc-950 pb-24 md:pb-12">
@@ -291,7 +298,7 @@
     <div class="ambient-glow-bottom"></div>
 
     <!-- 1. HEADER SECTION (PREMIUM BARBER LOUNGE) -->
-    <header class="sticky top-0 z-30 glass-header border-b border-zinc-800/60 px-3 pt-3 pb-2.5 transition-all" style="padding-top: max(0.75rem, env(safe-area-inset-top));">
+    <header class="sticky top-0 z-30 glass-header border-b border-zinc-800/60 px-3 pt-3 pb-2.5 transition-all" style="padding-top: calc(max(1.15rem, env(safe-area-inset-top, 0px)) + 0.65rem);">
       <div class="flex items-center justify-between gap-2">
         
         <!-- Brand & Barber Profile -->
@@ -1151,7 +1158,7 @@
   </div>
 
   <!-- TOAST CONTAINER -->
-  <div id="toastContainer" class="fixed top-4 left-1/2 -translate-x-1/2 z-50 flex flex-col items-center gap-2 pointer-events-none w-full max-w-xs px-3" style="top: max(1rem, env(safe-area-inset-top));"></div>
+  <div id="toastContainer" class="fixed top-4 left-1/2 -translate-x-1/2 z-50 flex flex-col items-center gap-2 pointer-events-none w-full max-w-xs px-3" style="top: calc(max(1rem, env(safe-area-inset-top, 0px)) + 0.65rem);"></div>
 
   <!-- ============================================================== -->
   <!-- JAVASCRIPT APPLICATION CORE                                    -->
