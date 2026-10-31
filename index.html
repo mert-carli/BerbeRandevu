@@ -104,6 +104,7 @@
       backdrop-filter: blur(16px);
       -webkit-backdrop-filter: blur(16px);
       border: 1px solid rgba(255, 255, 255, 0.06);
+      transition: border-color 0.25s ease, box-shadow 0.25s ease, transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
     }
     .glass-header {
       background: rgba(8, 9, 12, 0.92);
@@ -111,10 +112,93 @@
       -webkit-backdrop-filter: blur(20px);
     }
     .gold-glow {
-      box-shadow: 0 0 24px -4px rgba(245, 158, 11, 0.35);
+      box-shadow: 0 0 24px -4px rgba(245, 158, 11, 0.38);
     }
     .gold-gradient {
       background: linear-gradient(135deg, #fcd34d 0%, #f59e0b 50%, #d97706 100%);
+    }
+
+    /* Ambient Luxury Lounge Glows */
+    .ambient-glow-top {
+      position: absolute;
+      top: -100px;
+      right: -80px;
+      width: 260px;
+      height: 260px;
+      background: radial-gradient(circle, rgba(245, 158, 11, 0.16) 0%, rgba(217, 119, 6, 0.05) 50%, transparent 70%);
+      border-radius: 9999px;
+      filter: blur(50px);
+      pointer-events: none;
+      z-index: 0;
+    }
+    .ambient-glow-bottom {
+      position: absolute;
+      bottom: 80px;
+      left: -80px;
+      width: 240px;
+      height: 240px;
+      background: radial-gradient(circle, rgba(245, 158, 11, 0.1) 0%, rgba(180, 83, 9, 0.02) 50%, transparent 70%);
+      border-radius: 9999px;
+      filter: blur(55px);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* Elegant Light Sweep / Shimmer Effect */
+    @keyframes shimmer-sweep {
+      0% { transform: translateX(-160%) skewX(-20deg); }
+      30%, 100% { transform: translateX(200%) skewX(-20deg); }
+    }
+    .btn-shimmer {
+      position: relative;
+      overflow: hidden;
+    }
+    .btn-shimmer::after {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: linear-gradient(
+        90deg,
+        transparent 0%,
+        rgba(255, 255, 255, 0.28) 50%,
+        transparent 100%
+      );
+      transform: translateX(-160%) skewX(-20deg);
+      pointer-events: none;
+      animation: shimmer-sweep 5s infinite ease-in-out;
+    }
+
+    /* Card reveal & staggered slide */
+    @keyframes card-reveal {
+      from {
+        opacity: 0;
+        transform: translateY(12px) scale(0.98);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+    .animate-card-reveal {
+      animation: card-reveal 0.35s cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+
+    /* Tab crossfade & slide */
+    @keyframes tab-fade-in {
+      from {
+        opacity: 0;
+        transform: translateY(8px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    .animate-tab-fade {
+      animation: tab-fade-in 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     }
 
     /* Sound waves */
@@ -139,6 +223,44 @@
       animation: gentle-pulse 2.2s infinite ease-in-out;
     }
 
+    /* Hero Voice Button Breathing Animation */
+    @keyframes hero-breathe {
+      0%, 100% {
+        transform: scale(1);
+        box-shadow: 0 0 24px -4px rgba(245, 158, 11, 0.4);
+      }
+      50% {
+        transform: scale(1.05);
+        box-shadow: 0 0 32px 0px rgba(245, 158, 11, 0.6);
+      }
+    }
+    .animate-hero-breathe {
+      animation: hero-breathe 2.8s ease-in-out infinite;
+    }
+
+    /* Radar wave rings when recording */
+    @keyframes radar-ripple {
+      0% {
+        transform: scale(0.9);
+        opacity: 0.9;
+      }
+      100% {
+        transform: scale(2.4);
+        opacity: 0;
+      }
+    }
+    .radar-ring {
+      position: absolute;
+      inset: 0;
+      border-radius: 9999px;
+      border: 1.5px solid rgba(245, 158, 11, 0.7);
+      animation: radar-ripple 2s cubic-bezier(0.1, 0.8, 0.3, 1) infinite;
+      pointer-events: none;
+    }
+    .radar-ring:nth-child(2) {
+      animation-delay: 0.7s;
+    }
+
     .no-scrollbar::-webkit-scrollbar { display: none; }
     .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
@@ -147,7 +269,15 @@
       to { transform: translateY(0); opacity: 1; }
     }
     .animate-slide-up {
-      animation: slide-up 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      animation: slide-up 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    @keyframes fade-in {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    .animate-fade-in {
+      animation: fade-in 0.2s ease-out forwards;
     }
   </style>
 </head>
@@ -155,6 +285,10 @@
 
   <!-- MAIN APP WRAPPER (Fluid Mobile, Max-Width Constrained on Desktop) -->
   <div id="app" class="w-full max-w-md mx-auto min-h-screen flex flex-col border-x border-zinc-800/40 bg-[#08090c] relative shadow-2xl overflow-x-hidden">
+
+    <!-- Ambient Atmospheric Glows -->
+    <div class="ambient-glow-top"></div>
+    <div class="ambient-glow-bottom"></div>
 
     <!-- 1. HEADER SECTION (PREMIUM BARBER LOUNGE) -->
     <header class="sticky top-0 z-30 glass-header border-b border-zinc-800/60 px-3 pt-3 pb-2.5 transition-all" style="padding-top: max(0.75rem, env(safe-area-inset-top));">
@@ -187,7 +321,7 @@
 
         <!-- Quick Action Buttons -->
         <div class="flex items-center gap-1.5 shrink-0">
-          <button onclick="UI.openManualModal()" class="px-3 py-1.5 gold-gradient hover:opacity-95 active:scale-95 text-zinc-950 text-xs font-bold rounded-xl flex items-center gap-1 transition-all shadow-md shadow-amber-500/20">
+          <button onclick="UI.openManualModal()" class="px-3 py-1.5 gold-gradient hover:opacity-95 active:scale-95 text-zinc-950 text-xs font-bold rounded-xl flex items-center gap-1 transition-all shadow-md shadow-amber-500/20 btn-shimmer">
             <i data-lucide="plus" class="w-3.5 h-3.5 stroke-[2.5]"></i>
             <span>Randevu</span>
           </button>
@@ -367,8 +501,11 @@
 
       <!-- Nav Center: HERO PULSING GOLD VOICE BUTTON -->
       <div class="relative -top-4 flex flex-col items-center">
-        <div id="micAura" class="hidden absolute inset-0 rounded-full bg-amber-500/40 pulse-glow"></div>
-        <button id="mainMicButton" onclick="VoiceRecognitionManager.toggle()" aria-label="Sesle Randevu Ekle" class="relative z-10 w-13 h-13 p-3.5 rounded-full gold-gradient hover:scale-105 active:scale-95 text-zinc-950 flex items-center justify-center gold-glow transition-all">
+        <div id="micAura" class="hidden absolute -inset-2 pointer-events-none">
+          <div class="radar-ring"></div>
+          <div class="radar-ring"></div>
+        </div>
+        <button id="mainMicButton" onclick="VoiceRecognitionManager.toggle()" aria-label="Sesle Randevu Ekle" class="relative z-10 w-13 h-13 p-3.5 rounded-full gold-gradient hover:scale-105 active:scale-95 text-zinc-950 flex items-center justify-center gold-glow transition-all animate-hero-breathe btn-shimmer">
           <i id="micIcon" data-lucide="mic" class="w-5 h-5 stroke-[2.4]"></i>
         </button>
         <span id="micButtonLabel" class="text-[9px] font-extrabold text-amber-400 mt-0.5 uppercase tracking-wider">Sesle Ekle</span>
@@ -545,7 +682,7 @@
           <button type="button" onclick="UI.closeVoiceConfirmModal()" class="w-full py-2.5 bg-surface-card hover:bg-zinc-800 text-zinc-300 font-bold rounded-xl text-xs border border-zinc-800 transition-colors">
             Vazgeç
           </button>
-          <button type="submit" id="btnVoiceConfirmSubmit" class="w-full py-2.5 gold-gradient hover:opacity-95 text-zinc-950 font-extrabold rounded-xl text-xs flex items-center justify-center gap-1.5 shadow-md shadow-amber-500/20 transition-all active:scale-95">
+          <button type="submit" id="btnVoiceConfirmSubmit" class="w-full py-2.5 gold-gradient hover:opacity-95 text-zinc-950 font-extrabold rounded-xl text-xs flex items-center justify-center gap-1.5 shadow-md shadow-amber-500/20 transition-all active:scale-95 btn-shimmer">
             <i data-lucide="check" class="w-4 h-4 stroke-[2.5]"></i>
             <span>Onayla ve Kaydet</span>
           </button>
@@ -691,7 +828,7 @@
           <button type="button" onclick="UI.closeManualModal()" class="w-full py-2.5 bg-surface-card hover:bg-zinc-800 text-zinc-300 font-bold rounded-xl text-xs border border-zinc-800 transition-colors">
             Vazgeç
           </button>
-          <button type="submit" id="btnManualSubmit" class="w-full py-2.5 gold-gradient hover:opacity-95 text-zinc-950 font-extrabold rounded-xl text-xs flex items-center justify-center gap-1.5 shadow-md shadow-amber-500/20 transition-all active:scale-95">
+          <button type="submit" id="btnManualSubmit" class="w-full py-2.5 gold-gradient hover:opacity-95 text-zinc-950 font-extrabold rounded-xl text-xs flex items-center justify-center gap-1.5 shadow-md shadow-amber-500/20 transition-all active:scale-95 btn-shimmer">
             <i data-lucide="check" class="w-4 h-4 stroke-[2.5]"></i>
             <span>Kaydet</span>
           </button>
@@ -773,7 +910,7 @@
           <button type="button" onclick="UI.closeSettingsModal()" class="w-full py-2.5 bg-surface-card hover:bg-zinc-800 text-zinc-300 font-bold rounded-xl text-xs border border-zinc-800 transition-colors">
             Kapat
           </button>
-          <button type="submit" class="w-full py-2.5 gold-gradient hover:opacity-95 text-zinc-950 font-extrabold rounded-xl text-xs flex items-center justify-center gap-1.5 shadow-md shadow-amber-500/20 transition-all active:scale-95">
+          <button type="submit" class="w-full py-2.5 gold-gradient hover:opacity-95 text-zinc-950 font-extrabold rounded-xl text-xs flex items-center justify-center gap-1.5 shadow-md shadow-amber-500/20 transition-all active:scale-95 btn-shimmer">
             <i data-lucide="check" class="w-4 h-4 stroke-[2.5]"></i>
             <span>Kaydet</span>
           </button>
@@ -831,6 +968,65 @@
         'Çocuk tıraşı': { duration: 30, color: 'text-purple-400' },
         'Saç yıkama': { duration: 15, color: 'text-blue-400' },
         'Diğer': { duration: 30, color: 'text-zinc-400' }
+      }
+    };
+
+    const Effects = {
+      haptic(type = 'light') {
+        if (!('vibrate' in navigator)) return;
+        try {
+          if (type === 'light') navigator.vibrate(15);
+          else if (type === 'success') navigator.vibrate([25, 40, 30]);
+          else if (type === 'warning') navigator.vibrate([40, 30, 40]);
+          else if (type === 'delete') navigator.vibrate([35]);
+        } catch (e) {}
+      },
+
+      createSparkles(targetElement) {
+        if (!targetElement) return;
+        const rect = targetElement.getBoundingClientRect();
+        const centerX = rect.left + rect.width / 2;
+        const centerY = rect.top + rect.height / 2;
+
+        const colors = ['#f59e0b', '#fbbf24', '#fde68a', '#10b981', '#34d399', '#ffffff'];
+        const particleCount = 14;
+
+        for (let i = 0; i < particleCount; i++) {
+          const p = document.createElement('div');
+          const angle = (Math.PI * 2 * i) / particleCount + (Math.random() - 0.5);
+          const distance = 25 + Math.random() * 35;
+          const tx = Math.cos(angle) * distance;
+          const ty = Math.sin(angle) * distance;
+          const size = 3 + Math.random() * 4;
+          const color = colors[Math.floor(Math.random() * colors.length)];
+
+          p.style.cssText = `
+            position: fixed;
+            left: ${centerX}px;
+            top: ${centerY}px;
+            width: ${size}px;
+            height: ${size}px;
+            background-color: ${color};
+            box-shadow: 0 0 8px ${color};
+            border-radius: 9999px;
+            pointer-events: none;
+            z-index: 9999;
+            transform: translate(-50%, -50%) scale(1);
+            transition: transform 0.55s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.55s ease;
+            opacity: 1;
+          `;
+
+          document.body.appendChild(p);
+
+          requestAnimationFrame(() => {
+            p.style.transform = `translate(calc(-50% + ${tx}px), calc(-50% + ${ty}px)) scale(0)`;
+            p.style.opacity = '0';
+          });
+
+          setTimeout(() => {
+            if (p.parentNode) p.parentNode.removeChild(p);
+          }, 600);
+        }
       }
     };
 
@@ -1447,20 +1643,21 @@
 
           const btn = document.createElement('button');
           btn.onclick = () => {
+            Effects.haptic('light');
             App.state.currentDate = iso;
             App.updateDateDisplay();
             App.renderDayStrip();
             App.renderCurrentView();
           };
 
-          let cardStyle = 'bg-surface-card border-surface-border text-zinc-400 hover:border-zinc-700';
+          let cardStyle = 'bg-surface-card border-surface-border text-zinc-400 hover:border-zinc-700 hover:text-zinc-200';
           if (isSelected) {
-            cardStyle = 'gold-gradient text-zinc-950 font-extrabold shadow-sm';
+            cardStyle = 'gold-gradient text-zinc-950 font-extrabold shadow-md shadow-amber-500/20 scale-[1.04] btn-shimmer';
           } else if (isToday) {
-            cardStyle = 'bg-amber-500/10 border-amber-500/30 text-amber-300';
+            cardStyle = 'bg-amber-500/10 border-amber-500/30 text-amber-300 hover:bg-amber-500/15';
           }
 
-          btn.className = `py-1.5 px-0.5 rounded-lg border flex flex-col items-center justify-center transition-all ${cardStyle}`;
+          btn.className = `py-1.5 px-0.5 rounded-xl border flex flex-col items-center justify-center transition-all duration-200 active:scale-95 ${cardStyle}`;
           btn.innerHTML = `
             <span class="text-[9px] uppercase font-semibold tracking-wider ${isSelected ? 'text-zinc-950' : 'text-zinc-400'}">
               ${DateUtils.formatDayShort(iso)}
@@ -1472,6 +1669,7 @@
       },
 
       navigateDay(delta) {
+        Effects.haptic('light');
         const d = DateUtils.parseISODate(this.state.currentDate);
         d.setDate(d.getDate() + delta);
         this.state.currentDate = DateUtils.toISODateString(d);
@@ -1481,6 +1679,7 @@
       },
 
       goToToday() {
+        Effects.haptic('light');
         this.state.currentDate = DateUtils.toISODateString(new Date());
         this.updateDateDisplay();
         this.renderDayStrip();
@@ -1558,8 +1757,8 @@
           contentArea.className = 'flex-1 min-w-0 space-y-1.5';
 
           if (startingApps.length > 0) {
-            startingApps.forEach(app => {
-              contentArea.appendChild(this.createAppointmentCard(app));
+            startingApps.forEach((app, idx) => {
+              contentArea.appendChild(this.createAppointmentCard(app, idx));
             });
           } else if (coveringApps.length > 0) {
             const ongoingIndicator = document.createElement('div');
@@ -1572,7 +1771,7 @@
           } else {
             const emptyCard = document.createElement('div');
             emptyCard.onclick = () => UI.openManualModalWithSlot(this.state.currentDate, slotTime);
-            emptyCard.className = 'group py-2 px-2.5 rounded-xl border border-zinc-900 bg-surface-card/40 hover:bg-surface-card hover:border-amber-500/30 flex items-center justify-between text-xs text-zinc-400 cursor-pointer transition-all shadow-sm min-w-0';
+            emptyCard.className = 'group py-2 px-2.5 rounded-xl border border-zinc-900 bg-surface-card/40 hover:bg-surface-card hover:border-amber-500/30 flex items-center justify-between text-xs text-zinc-400 cursor-pointer transition-all duration-200 active:scale-[0.99] shadow-sm min-w-0';
             emptyCard.innerHTML = `
               <div class="flex items-center gap-1.5 min-w-0 truncate">
                 <span class="w-1.5 h-1.5 rounded-full bg-zinc-700 group-hover:bg-amber-400 transition-colors shrink-0"></span>
@@ -1594,7 +1793,7 @@
         lucide.createIcons();
       },
 
-      createAppointmentCard(app) {
+      createAppointmentCard(app, index = 0) {
         const card = document.createElement('div');
         const isCancelled = app.status === 'cancelled';
         const isCompleted = app.status === 'completed';
@@ -1616,7 +1815,8 @@
 
         const durationMins = DateUtils.timeToMinutes(app.endTime) - DateUtils.timeToMinutes(app.startTime);
 
-        card.className = `p-2.5 sm:p-3 rounded-xl border ${borderClass} transition-all hover:border-zinc-700 space-y-2 shadow-sm min-w-0 w-full overflow-hidden`;
+        card.className = `p-2.5 sm:p-3 rounded-xl border ${borderClass} transition-all duration-200 hover:border-zinc-700 hover:shadow-lg hover:shadow-amber-500/5 active:scale-[0.99] space-y-2 shadow-sm min-w-0 w-full overflow-hidden animate-card-reveal`;
+        card.style.animationDelay = `${Math.min(index * 60, 300)}ms`;
         card.id = `appointment-card-${app.id}`;
 
         card.innerHTML = `
@@ -1633,14 +1833,14 @@
             <!-- Card Actions -->
             <div class="flex items-center gap-1 shrink-0">
               ${!isCompleted && !isCancelled ? `
-                <button onclick="App.toggleCompleteAppointment('${app.id}')" title="Tamamla" class="w-7 h-7 flex items-center justify-center text-emerald-400 hover:bg-emerald-500/15 bg-emerald-500/10 border border-emerald-500/20 rounded-lg transition-colors">
+                <button onclick="App.toggleCompleteAppointment('${app.id}', this)" title="Tamamla" class="w-7 h-7 flex items-center justify-center text-emerald-400 hover:bg-emerald-500/15 bg-emerald-500/10 border border-emerald-500/20 rounded-lg transition-all active:scale-90">
                   <i data-lucide="check" class="w-3.5 h-3.5 stroke-[2.5]"></i>
                 </button>
               ` : ''}
-              <button onclick="UI.openEditManualModal('${app.id}')" title="Düzenle" class="w-7 h-7 flex items-center justify-center text-zinc-300 hover:text-white hover:bg-zinc-800 bg-zinc-900 border border-zinc-800 rounded-lg transition-colors">
+              <button onclick="UI.openEditManualModal('${app.id}')" title="Düzenle" class="w-7 h-7 flex items-center justify-center text-zinc-300 hover:text-white hover:bg-zinc-800 bg-zinc-900 border border-zinc-800 rounded-lg transition-all active:scale-90">
                 <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
               </button>
-              <button onclick="UI.openDeleteModal('${app.id}', '${UI.escapeHtml(app.customerName)}', '${app.startTime}')" title="Sil" class="w-7 h-7 flex items-center justify-center text-rose-400 hover:bg-rose-500/15 bg-rose-500/10 border border-rose-500/20 rounded-lg transition-colors">
+              <button onclick="UI.openDeleteModal('${app.id}', '${UI.escapeHtml(app.customerName)}', '${app.startTime}')" title="Sil" class="w-7 h-7 flex items-center justify-center text-rose-400 hover:bg-rose-500/15 bg-rose-500/10 border border-rose-500/20 rounded-lg transition-all active:scale-90">
                 <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
               </button>
             </div>
@@ -1787,17 +1987,18 @@
 
         const ok = StorageManager.saveAppointments(appointments);
         if (ok) {
+          Effects.haptic('success');
           this.state.currentDate = appointmentData.date;
           this.updateDateDisplay();
           this.renderDayStrip();
           this.renderCurrentView();
-          UI.showToast(appointmentData.id ? 'Randevu güncellendi.' : 'Yeni randevu eklendi.', 'success');
+          UI.showToast(appointmentData.id ? 'Randevu güncellendi.' : 'Yeni randevu eklendi. ✨', 'success');
           return true;
         }
         return false;
       },
 
-      toggleCompleteAppointment(id) {
+      toggleCompleteAppointment(id, btnElement) {
         const appointments = StorageManager.getAppointments();
         const app = appointments.find(a => a.id === id);
         if (!app) return;
@@ -1805,8 +2006,12 @@
         app.status = 'completed';
         app.updatedAt = new Date().toISOString();
         if (StorageManager.saveAppointments(appointments)) {
+          if (btnElement) {
+            Effects.createSparkles(btnElement);
+          }
+          Effects.haptic('success');
           this.renderCurrentView();
-          UI.showToast(`"${app.customerName}" tamamlandı.`, 'success');
+          UI.showToast(`"${app.customerName}" tamamlandı! ✨`, 'success');
         }
       },
 
@@ -1814,6 +2019,7 @@
         let appointments = StorageManager.getAppointments();
         appointments = appointments.filter(a => a.id !== id);
         if (StorageManager.saveAppointments(appointments)) {
+          Effects.haptic('delete');
           this.renderCurrentView();
           UI.showToast('Randevu kaydı silindi.', 'info');
         }
@@ -2160,6 +2366,7 @@
       },
 
       switchTab(tab) {
+        Effects.haptic('light');
         App.state.currentTab = tab;
         const timelineView = document.getElementById('viewTimeline');
         const summaryView = document.getElementById('viewSummary');
@@ -2167,14 +2374,20 @@
         const navSummary = document.getElementById('navBtnSummary');
 
         if (tab === 'timeline') {
-          timelineView.classList.remove('hidden');
           summaryView.classList.add('hidden');
+          timelineView.classList.remove('hidden');
+          timelineView.classList.remove('animate-tab-fade');
+          void timelineView.offsetWidth; // trigger reflow
+          timelineView.classList.add('animate-tab-fade');
           navTimeline.className = 'flex flex-col items-center gap-1 text-amber-400 transition-all w-16 group';
           navSummary.className = 'flex flex-col items-center gap-1 text-zinc-400 hover:text-zinc-200 transition-all w-16 group';
           App.renderTimeline();
         } else {
           timelineView.classList.add('hidden');
           summaryView.classList.remove('hidden');
+          summaryView.classList.remove('animate-tab-fade');
+          void summaryView.offsetWidth; // trigger reflow
+          summaryView.classList.add('animate-tab-fade');
           navSummary.className = 'flex flex-col items-center gap-1 text-amber-400 transition-all w-16 group';
           navTimeline.className = 'flex flex-col items-center gap-1 text-zinc-400 hover:text-zinc-200 transition-all w-16 group';
           App.renderSummary();
@@ -2204,6 +2417,7 @@
       },
 
       openVoiceConfirmModal(parsed) {
+        Effects.haptic('light');
         document.getElementById('voiceConfirmRawText').innerText = `"${parsed.rawText}"`;
         document.getElementById('vcCustomerName').value = parsed.customerName || '';
         document.getElementById('vcDate').value = parsed.date || App.state.currentDate;
@@ -2252,6 +2466,7 @@
       },
 
       openManualModal() {
+        Effects.haptic('light');
         document.getElementById('manualModalTitle').innerText = 'Yeni Randevu Oluştur';
         document.getElementById('mfEditId').value = '';
         document.getElementById('mfCustomerName').value = '';
@@ -2282,6 +2497,7 @@
       },
 
       openEditManualModal(id) {
+        Effects.haptic('light');
         const appointments = StorageManager.getAppointments();
         const app = appointments.find(a => a.id === id);
         if (!app) return;
@@ -2311,6 +2527,7 @@
       },
 
       openSettingsModal() {
+        Effects.haptic('light');
         const s = StorageManager.getSettings();
         document.getElementById('setBusinessName').value = s.businessName || 'Ramazan Toz';
         document.getElementById('setWorkStart').value = s.workStart;
@@ -2325,6 +2542,7 @@
       },
 
       openDeleteModal(id, customerName, time) {
+        Effects.haptic('warning');
         App.state.pendingDeleteId = id;
         document.getElementById('deleteConfirmText').innerHTML = `
           <strong>${customerName}</strong> (${time}) randevusu silinecektir.
@@ -2359,17 +2577,17 @@
         let icon = 'info';
 
         if (type === 'success') {
-          bg = 'bg-emerald-950/90 border-emerald-800 text-emerald-200';
+          bg = 'bg-emerald-950/90 border-emerald-500/30 text-emerald-200 shadow-emerald-950/50';
           icon = 'check-circle';
         } else if (type === 'warning') {
-          bg = 'bg-amber-950/90 border-amber-800 text-amber-200';
+          bg = 'bg-amber-950/90 border-amber-500/30 text-amber-200 shadow-amber-950/50';
           icon = 'alert-triangle';
         } else if (type === 'error') {
-          bg = 'bg-rose-950/90 border-rose-800 text-rose-200';
+          bg = 'bg-rose-950/90 border-rose-500/30 text-rose-200 shadow-rose-950/50';
           icon = 'x-circle';
         }
 
-        toast.className = `flex items-center gap-2 px-3 py-2 rounded-xl border ${bg} shadow-2xl text-[11px] font-semibold animate-slide-up transition-opacity duration-300 pointer-events-auto`;
+        toast.className = `flex items-center gap-2 px-3.5 py-2.5 rounded-xl border ${bg} backdrop-blur-md shadow-2xl text-[11px] font-semibold animate-fade-in pointer-events-auto transition-all duration-300`;
         toast.innerHTML = `<i data-lucide="${icon}" class="w-3.5 h-3.5 shrink-0"></i> <span>${UI.escapeHtml(message)}</span>`;
 
         container.appendChild(toast);
