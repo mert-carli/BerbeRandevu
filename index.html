@@ -1,0 +1,2302 @@
+<!DOCTYPE html>
+<html lang="tr" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Ramazan Toz — Barber Lounge & Randevu Yönetimi</title>
+  <meta name="description" content="Ramazan Toz Hair Studio — Akıllı, sesli Türkçe asistanlı ve çakışma önleyici profesyonel berber randevu sistemi.">
+  <meta name="theme-color" content="#08090c">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  
+  <!-- PWA Manifest & Mobile App Meta -->
+  <link rel="manifest" href="./manifest.json">
+  <link rel="icon" type="image/png" href="./icon.png">
+  <link rel="shortcut icon" href="./icon.png">
+  <link rel="apple-touch-icon" href="./apple-touch-icon.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png">
+  <meta name="apple-mobile-web-app-title" content="Ramazan Toz">
+  <meta name="application-name" content="Ramazan Toz">
+  
+  <!-- Google Fonts: Plus Jakarta Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            gold: {
+              50: '#fffbeb',
+              100: '#fef3c7',
+              200: '#fde68a',
+              300: '#fcd34d',
+              400: '#fbbf24',
+              500: '#f59e0b',
+              600: '#d97706',
+              700: '#b45309',
+              800: '#92400e',
+              900: '#78350f',
+              950: '#451a03',
+            },
+            surface: {
+              card: '#12141a',
+              input: '#0d0f14',
+              border: '#1f242e',
+              hover: '#191e28'
+            }
+          },
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'system-ui', '-apple-system', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Lucide Icons CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <style>
+    :root {
+      color-scheme: dark;
+    }
+    *, *::before, *::after {
+      box-sizing: border-box;
+    }
+    html, body {
+      overflow-x: hidden;
+      width: 100%;
+      position: relative;
+    }
+    body {
+      background-color: #08090c;
+      color: #f1f3f7;
+      font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+    input, textarea, select {
+      user-select: text;
+    }
+    
+    .glass-panel {
+      background: rgba(18, 20, 26, 0.85);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+    }
+    .glass-header {
+      background: rgba(8, 9, 12, 0.92);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+    }
+    .gold-glow {
+      box-shadow: 0 0 24px -4px rgba(245, 158, 11, 0.35);
+    }
+    .gold-gradient {
+      background: linear-gradient(135deg, #fcd34d 0%, #f59e0b 50%, #d97706 100%);
+    }
+
+    /* Sound waves */
+    @keyframes soundwave {
+      0%, 100% { height: 8px; }
+      50% { height: 38px; }
+    }
+    .wave-bar {
+      animation: soundwave 1.2s ease-in-out infinite;
+    }
+    .wave-bar:nth-child(2) { animation-delay: 0.2s; }
+    .wave-bar:nth-child(3) { animation-delay: 0.4s; }
+    .wave-bar:nth-child(4) { animation-delay: 0.1s; }
+    .wave-bar:nth-child(5) { animation-delay: 0.35s; }
+
+    @keyframes gentle-pulse {
+      0% { transform: scale(1); opacity: 0.6; }
+      50% { transform: scale(1.12); opacity: 0.2; }
+      100% { transform: scale(1); opacity: 0.6; }
+    }
+    .pulse-glow {
+      animation: gentle-pulse 2.2s infinite ease-in-out;
+    }
+
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+    @keyframes slide-up {
+      from { transform: translateY(100%); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+    .animate-slide-up {
+      animation: slide-up 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+  </style>
+</head>
+<body class="min-h-screen bg-[#08090c] text-zinc-100 antialiased selection:bg-amber-500 selection:text-zinc-950 pb-24 md:pb-12">
+
+  <!-- MAIN APP WRAPPER (Fluid Mobile, Max-Width Constrained on Desktop) -->
+  <div id="app" class="w-full max-w-md mx-auto min-h-screen flex flex-col border-x border-zinc-800/40 bg-[#08090c] relative shadow-2xl overflow-x-hidden">
+
+    <!-- 1. HEADER SECTION (PREMIUM BARBER LOUNGE) -->
+    <header class="sticky top-0 z-30 glass-header border-b border-zinc-800/60 px-3 pt-3 pb-2.5 transition-all">
+      <div class="flex items-center justify-between gap-2">
+        
+        <!-- Brand & Barber Profile -->
+        <div class="flex items-center gap-2.5 min-w-0 cursor-pointer group" onclick="UI.openSettingsModal()" title="İşletme ayarlarını görüntüle">
+          <div class="relative shrink-0">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-400/20 via-zinc-900 to-amber-950/40 border border-amber-500/30 flex items-center justify-center text-amber-400 shadow-md shadow-amber-500/10 group-hover:border-amber-400/60 transition-colors overflow-hidden">
+              <img src="./icon.png" alt="Ramazan Toz" class="w-full h-full object-cover" onerror="this.onerror=null; this.parentElement.innerHTML='<i data-lucide=\'scissors\' class=\'w-4 h-4 stroke-[2.2]\'></i>'; lucide.createIcons();">
+            </div>
+            <span class="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full bg-emerald-500 border-2 border-[#08090c]"></span>
+          </div>
+
+          <div class="min-w-0 truncate">
+            <div class="flex items-center gap-1.5">
+              <h1 id="headerBusinessName" class="text-sm font-bold tracking-tight text-zinc-100 group-hover:text-amber-400 transition-colors truncate">
+                Ramazan Toz
+              </h1>
+              <span class="px-1 py-0.2 rounded text-[8px] font-bold uppercase tracking-wider bg-amber-500/15 text-amber-300 border border-amber-500/25 shrink-0">Studio</span>
+            </div>
+            <div class="flex items-center gap-1.5 text-[11px] text-zinc-400 mt-0.5">
+              <span id="speechStatusIndicator" class="inline-flex items-center gap-1 text-[10px] text-zinc-400">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                <span>Sesli Asistan Aktif</span>
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Quick Action Buttons -->
+        <div class="flex items-center gap-1.5 shrink-0">
+          <button onclick="UI.openManualModal()" class="px-3 py-1.5 gold-gradient hover:opacity-95 active:scale-95 text-zinc-950 text-xs font-bold rounded-xl flex items-center gap-1 transition-all shadow-md shadow-amber-500/20">
+            <i data-lucide="plus" class="w-3.5 h-3.5 stroke-[2.5]"></i>
+            <span>Randevu</span>
+          </button>
+          
+          <button onclick="UI.openSettingsModal()" aria-label="Ayarlar" class="w-8 h-8 rounded-xl bg-surface-card border border-surface-border hover:border-zinc-700 text-zinc-400 hover:text-zinc-100 flex items-center justify-center transition-all">
+            <i data-lucide="sliders-horizontal" class="w-3.5 h-3.5"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Quick 5-Day Interactive Date Carousel -->
+      <div class="mt-2.5 pt-2 border-t border-zinc-800/50">
+        <div class="flex items-center justify-between gap-1 mb-1.5">
+          <div class="flex items-center gap-1 text-xs text-zinc-300 font-semibold truncate">
+            <i data-lucide="calendar" class="w-3.5 h-3.5 text-amber-400 shrink-0"></i>
+            <span id="currentDateDisplay" class="truncate">31 Ekim Cumartesi</span>
+          </div>
+
+          <div class="flex items-center gap-0.5 shrink-0">
+            <button onclick="App.navigateDay(-1)" class="p-1 rounded-lg text-zinc-400 hover:text-zinc-100 transition-colors" title="Önceki Gün">
+              <i data-lucide="chevron-left" class="w-4 h-4"></i>
+            </button>
+            <button onclick="App.goToToday()" id="btnTodayPill" class="text-[10px] px-2 py-0.5 rounded-md font-semibold bg-zinc-800 text-zinc-300 hover:text-amber-400 transition-colors">
+              Bugün
+            </button>
+            <button onclick="App.navigateDay(1)" class="p-1 rounded-lg text-zinc-400 hover:text-zinc-100 transition-colors" title="Sonraki Gün">
+              <i data-lucide="chevron-right" class="w-4 h-4"></i>
+            </button>
+            <label class="relative cursor-pointer p-1 rounded-lg text-zinc-400 hover:text-amber-400 transition-colors" title="Takvimden Tarih Seç">
+              <i data-lucide="calendar-search" class="w-3.5 h-3.5"></i>
+              <input type="date" id="nativeDateInput" class="absolute inset-0 opacity-0 cursor-pointer w-full h-full" onchange="App.onCustomDateSelected(this.value)">
+            </label>
+          </div>
+        </div>
+
+        <!-- 5-Day Quick Strip -->
+        <div id="quickDayStrip" class="grid grid-cols-5 gap-1 text-center">
+          <!-- Populated by App.renderDayStrip() -->
+        </div>
+      </div>
+    </header>
+
+    <!-- 2. MAIN BODY -->
+    <main class="flex-1 p-3 space-y-3 min-w-0">
+      
+      <!-- TAB 1: GÜNLÜK PLAN & ZAMAN ÇİZELGESİ -->
+      <section id="viewTimeline" class="space-y-3 min-w-0">
+        
+        <!-- Summary Quick Banner -->
+        <div class="glass-panel p-2.5 rounded-xl flex items-center justify-between gap-2">
+          <div class="flex items-center gap-2 min-w-0">
+            <div class="w-7 h-7 rounded-lg bg-amber-500/10 border border-amber-500/20 text-amber-400 flex items-center justify-center shrink-0">
+              <i data-lucide="clock" class="w-3.5 h-3.5"></i>
+            </div>
+            <div class="min-w-0 truncate">
+              <div id="timelineStatsText" class="text-xs font-bold text-zinc-200 truncate">0 Randevu</div>
+              <div class="text-[10px] text-zinc-400 truncate">Ramazan Toz Günlük Ajanda</div>
+            </div>
+          </div>
+
+          <button onclick="UI.switchTab('summary')" class="px-2 py-1 rounded-lg bg-zinc-800/80 hover:bg-zinc-800 text-[10px] font-bold text-amber-400 flex items-center gap-1 border border-zinc-700/60 shrink-0 transition-colors">
+            <span>Özet</span>
+            <i data-lucide="arrow-up-right" class="w-3 h-3"></i>
+          </button>
+        </div>
+
+        <!-- Timeline Slots Container -->
+        <div id="timelineContainer" class="space-y-2 pt-0.5 min-w-0">
+          <!-- Dynamically populated 30-min interval cards -->
+        </div>
+      </section>
+
+      <!-- TAB 2: ÖZET VE DETAYLI İSTATİSTİKLER -->
+      <section id="viewSummary" class="hidden space-y-3 min-w-0">
+        <div class="flex items-center justify-between">
+          <div>
+            <h2 class="text-sm font-extrabold text-zinc-100 flex items-center gap-1.5">
+              <i data-lucide="pie-chart" class="w-4 h-4 text-amber-400"></i>
+              Günün Performans Özeti
+            </h2>
+            <p id="summaryDateLabel" class="text-[11px] text-zinc-400 mt-0.5">31 Ekim Cumartesi</p>
+          </div>
+          <button onclick="UI.switchTab('timeline')" class="text-xs px-2.5 py-1 bg-surface-card hover:bg-zinc-800 border border-surface-border text-zinc-300 rounded-lg flex items-center gap-1 transition-colors">
+            <i data-lucide="calendar" class="w-3 h-3 text-amber-400"></i> Plana Dön
+          </button>
+        </div>
+
+        <!-- 4 Grid Stat Cards -->
+        <div class="grid grid-cols-2 gap-2">
+          <!-- Total -->
+          <div class="glass-panel p-3 rounded-xl">
+            <div class="flex items-center justify-between text-zinc-400 text-xs">
+              <span class="font-medium">Toplam Randevu</span>
+              <i data-lucide="users" class="w-3.5 h-3.5 text-amber-400"></i>
+            </div>
+            <div id="statTotal" class="text-2xl font-extrabold text-zinc-100 mt-1">0</div>
+            <div class="text-[10px] text-zinc-400 mt-0.5">Kayıtlı müşteri</div>
+          </div>
+
+          <!-- Completed -->
+          <div class="glass-panel p-3 rounded-xl">
+            <div class="flex items-center justify-between text-emerald-400 text-xs">
+              <span class="font-medium">Tamamlanan</span>
+              <i data-lucide="check-circle" class="w-3.5 h-3.5 text-emerald-400"></i>
+            </div>
+            <div id="statCompleted" class="text-2xl font-extrabold text-emerald-400 mt-1">0</div>
+            <div id="statCompletedRate" class="text-[10px] text-zinc-400 mt-0.5">%0 tamamlanma</div>
+          </div>
+
+          <!-- Active/Waiting -->
+          <div class="glass-panel p-3 rounded-xl">
+            <div class="flex items-center justify-between text-amber-400 text-xs">
+              <span class="font-medium">Bekleyen</span>
+              <i data-lucide="clock" class="w-3.5 h-3.5 text-amber-400"></i>
+            </div>
+            <div id="statPlanned" class="text-2xl font-extrabold text-amber-400 mt-1">0</div>
+            <div class="text-[10px] text-zinc-400 mt-0.5">Sırası gelenler</div>
+          </div>
+
+          <!-- Cancelled / No-show -->
+          <div class="glass-panel p-3 rounded-xl">
+            <div class="flex items-center justify-between text-rose-400 text-xs">
+              <span class="font-medium">İptal / Gelmeyen</span>
+              <i data-lucide="user-x" class="w-3.5 h-3.5 text-rose-400"></i>
+            </div>
+            <div id="statCancelledNoShow" class="text-2xl font-extrabold text-zinc-100 mt-1">0</div>
+            <div id="statCancelledSubtext" class="text-[10px] text-zinc-400 mt-0.5">0 İptal, 0 Gelmedi</div>
+          </div>
+        </div>
+
+        <!-- Salon Capacity & Free Time Bar -->
+        <div class="glass-panel p-3 rounded-xl space-y-2.5">
+          <div class="flex justify-between items-center text-xs">
+            <span class="font-bold text-zinc-300">Salon Doluluk Oranı</span>
+            <span id="statOccupancyRate" class="font-bold text-amber-400">%0</span>
+          </div>
+
+          <div class="w-full bg-zinc-900 rounded-full h-2.5 overflow-hidden p-0.5 border border-zinc-800">
+            <div id="statProgressBar" class="gold-gradient h-full rounded-full transition-all duration-700" style="width: 0%"></div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-2 text-[11px]">
+            <div class="p-2 rounded-lg bg-surface-card border border-surface-border">
+              <span class="text-zinc-400 block text-[10px]">Dolu Süre:</span>
+              <span id="statBookedMinutes" class="font-bold text-zinc-200">0 saat (0 dk)</span>
+            </div>
+            <div class="p-2 rounded-lg bg-surface-card border border-surface-border">
+              <span class="text-zinc-400 block text-[10px]">Kalan Boş:</span>
+              <span id="statFreeMinutes" class="font-bold text-amber-400">0 saat (0 dk)</span>
+            </div>
+          </div>
+          <div class="text-[10px] text-zinc-400 text-center">
+            Mesai: <span id="statWorkingHoursRange" class="text-zinc-300 font-semibold">09:00 - 21:00</span>
+          </div>
+        </div>
+
+        <!-- Service Types Distribution -->
+        <div class="glass-panel p-3 rounded-xl space-y-2">
+          <h3 class="text-xs font-bold uppercase tracking-wider text-zinc-400 flex items-center gap-1.5">
+            <i data-lucide="scissors" class="w-3 h-3 text-amber-400"></i>
+            Hizmet Dağılımı
+          </h3>
+          <div id="summaryServicesList" class="divide-y divide-zinc-800/60 text-xs"></div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- 3. FLOATING COMPACT BOTTOM NAVIGATION -->
+    <nav class="fixed bottom-0 left-0 right-0 z-40 bg-[#08090c]/95 backdrop-blur-xl border-t border-zinc-800/80 py-2 px-6 max-w-md mx-auto flex items-center justify-between" style="padding-bottom: max(0.5rem, env(safe-area-inset-bottom));">
+      
+      <!-- Nav Left: Timeline -->
+      <button onclick="UI.switchTab('timeline')" id="navBtnTimeline" class="flex flex-col items-center gap-1 text-amber-400 transition-all w-16 group">
+        <i data-lucide="calendar" class="w-4 h-4"></i>
+        <span class="text-[10px] font-bold tracking-tight">Günlük Plan</span>
+      </button>
+
+      <!-- Nav Center: HERO PULSING GOLD VOICE BUTTON -->
+      <div class="relative -top-4 flex flex-col items-center">
+        <div id="micAura" class="hidden absolute inset-0 rounded-full bg-amber-500/40 pulse-glow"></div>
+        <button id="mainMicButton" onclick="VoiceRecognitionManager.toggle()" aria-label="Sesle Randevu Ekle" class="relative z-10 w-13 h-13 p-3.5 rounded-full gold-gradient hover:scale-105 active:scale-95 text-zinc-950 flex items-center justify-center gold-glow transition-all">
+          <i id="micIcon" data-lucide="mic" class="w-5 h-5 stroke-[2.4]"></i>
+        </button>
+        <span id="micButtonLabel" class="text-[9px] font-extrabold text-amber-400 mt-0.5 uppercase tracking-wider">Sesle Ekle</span>
+      </div>
+
+      <!-- Nav Right: Summary -->
+      <button onclick="UI.switchTab('summary')" id="navBtnSummary" class="flex flex-col items-center gap-1 text-zinc-400 hover:text-zinc-200 transition-all w-16 group">
+        <i data-lucide="bar-chart-2" class="w-4 h-4"></i>
+        <span class="text-[10px] font-bold tracking-tight">Özet</span>
+      </button>
+
+    </nav>
+
+  </div><!-- /#app -->
+
+  <!-- ============================================================== -->
+  <!-- MODALS & DIALOGS (COMPACT MOBILE-SAFE)                         -->
+  <!-- ============================================================== -->
+
+  <!-- MODAL 1: VOICE RECORDING SCREEN -->
+  <div id="voiceOverlay" class="fixed inset-0 z-50 bg-[#08090c]/95 backdrop-blur-2xl flex flex-col items-center justify-between p-5 hidden">
+    <div class="w-full flex justify-between items-center text-xs text-zinc-400 max-w-sm">
+      <span class="flex items-center gap-1.5 text-amber-400 font-bold tracking-wide">
+        <span class="w-2 h-2 rounded-full bg-amber-400 animate-ping"></span>
+        CANLI DİNLENİYOR
+      </span>
+      <button onclick="VoiceRecognitionManager.cancel()" class="p-1.5 text-zinc-400 hover:text-zinc-100 rounded-lg bg-zinc-900 border border-zinc-800">
+        <i data-lucide="x" class="w-4 h-4"></i>
+      </button>
+    </div>
+
+    <div class="flex-1 flex flex-col items-center justify-center max-w-sm w-full text-center space-y-4">
+      <div class="relative flex items-center justify-center py-2">
+        <div class="w-24 h-24 rounded-full bg-amber-500/15 pulse-glow absolute"></div>
+        <div class="w-16 h-16 rounded-full gold-gradient flex items-center justify-center text-zinc-950 shadow-xl shadow-amber-500/30 relative z-10">
+          <i data-lucide="mic" class="w-8 h-8 stroke-[2.2]"></i>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-1 h-8">
+        <span class="wave-bar w-1 bg-amber-400 rounded-full"></span>
+        <span class="wave-bar w-1 bg-amber-500 rounded-full"></span>
+        <span class="wave-bar w-1 bg-amber-300 rounded-full"></span>
+        <span class="wave-bar w-1 bg-amber-400 rounded-full"></span>
+        <span class="wave-bar w-1 bg-amber-500 rounded-full"></span>
+      </div>
+
+      <div class="space-y-1">
+        <h3 class="text-lg font-bold text-zinc-100">Ramazan Toz Sesli Asistan</h3>
+        <p class="text-xs text-zinc-400 max-w-xs mx-auto">
+          Konuşun: <span class="text-amber-400 font-semibold">"Ahmet yarın 15:00 saç kesimi"</span>
+        </p>
+      </div>
+
+      <div class="w-full bg-surface-card border border-surface-border rounded-xl p-3 min-h-[75px] flex items-center justify-center text-center shadow-inner">
+        <p id="voiceLiveTranscript" class="text-xs text-zinc-200 font-medium italic">
+          Sizi dinliyorum, lütfen randevuyu söyleyin...
+        </p>
+      </div>
+    </div>
+
+    <div class="w-full max-w-sm flex gap-2">
+      <button onclick="VoiceRecognitionManager.cancel()" class="flex-1 py-3 bg-surface-card hover:bg-zinc-800 border border-surface-border text-zinc-300 text-xs font-bold rounded-xl transition-colors">
+        İptal Et
+      </button>
+      <button onclick="VoiceRecognitionManager.stopAndProcess()" class="flex-1 py-3 gold-gradient hover:opacity-95 text-zinc-950 text-xs font-extrabold rounded-xl transition-all shadow-md shadow-amber-500/20">
+        Tamamla ve Ayrıştır
+      </button>
+    </div>
+  </div>
+
+  <!-- MODAL 2: SESLİ RANDEVU ONAY FORMU -->
+  <div id="voiceConfirmModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-3 hidden">
+    <div class="w-full max-w-md bg-[#0e1017] border-t sm:border border-zinc-800 rounded-t-2xl sm:rounded-2xl p-4 max-h-[92vh] overflow-y-auto space-y-3 animate-slide-up sm:animate-none shadow-2xl">
+      
+      <div class="flex items-center justify-between pb-2 border-b border-zinc-800/80">
+        <div class="flex items-center gap-2">
+          <div class="w-7 h-7 rounded-lg bg-amber-500/15 border border-amber-500/30 text-amber-400 flex items-center justify-center">
+            <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
+          </div>
+          <div>
+            <h3 class="text-xs font-bold text-zinc-100">Sesli Randevu Doğrulama</h3>
+            <p class="text-[10px] text-zinc-400">Algılanan bilgileri onaylayın</p>
+          </div>
+        </div>
+        <button onclick="UI.closeVoiceConfirmModal()" class="text-zinc-400 hover:text-zinc-100 p-1 rounded-lg">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+      <div class="bg-surface-input border border-surface-border rounded-lg p-2.5 text-xs space-y-0.5">
+        <span class="text-[9px] font-bold uppercase tracking-wider text-amber-400">Sesli İfade:</span>
+        <p id="voiceConfirmRawText" class="text-zinc-200 text-xs italic">"..."</p>
+      </div>
+
+      <div id="voiceConfirmAlerts" class="space-y-1.5"></div>
+
+      <div id="voiceConfirmConflictAlert" class="hidden bg-rose-950/40 border border-rose-800/60 rounded-xl p-2.5 text-xs text-rose-300 space-y-0.5">
+        <div class="flex items-center gap-1 font-bold text-[11px]">
+          <i data-lucide="alert-triangle" class="w-3.5 h-3.5 text-rose-400 shrink-0"></i>
+          <span>Saat Çakışması!</span>
+        </div>
+        <p id="voiceConfirmConflictMessage" class="text-[11px]">Bu saatte başka bir randevu var.</p>
+      </div>
+
+      <form id="voiceConfirmForm" onsubmit="App.onVoiceConfirmSubmit(event)" class="space-y-2.5 text-xs">
+        <div>
+          <label class="block text-zinc-400 mb-1 font-semibold text-[11px]">Müşteri Adı <span class="text-amber-400">*</span></label>
+          <input type="text" id="vcCustomerName" required class="w-full bg-surface-input border border-surface-border rounded-lg px-3 py-2 text-zinc-100 focus:outline-none focus:border-amber-400 font-medium">
+        </div>
+
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block text-zinc-400 mb-1 font-semibold text-[11px]">Tarih <span class="text-amber-400">*</span></label>
+            <input type="date" id="vcDate" required onchange="App.checkVoiceModalConflict()" class="w-full bg-surface-input border border-surface-border rounded-lg px-2.5 py-2 text-zinc-100 focus:outline-none focus:border-amber-400">
+          </div>
+          <div>
+            <label class="block text-zinc-400 mb-1 font-semibold text-[11px]">Hizmet Türü</label>
+            <select id="vcService" onchange="App.onVoiceServiceChange()" class="w-full bg-surface-input border border-surface-border rounded-lg px-2 py-2 text-zinc-100 focus:outline-none focus:border-amber-400">
+              <option value="Saç kesimi">Saç kesimi</option>
+              <option value="Sakal tıraşı">Sakal tıraşı</option>
+              <option value="Saç ve sakal">Saç ve sakal</option>
+              <option value="Çocuk tıraşı">Çocuk tıraşı</option>
+              <option value="Saç yıkama">Saç yıkama</option>
+              <option value="Diğer">Diğer</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-3 gap-1.5">
+          <div>
+            <label class="block text-zinc-400 mb-1 font-semibold text-[11px]">Başlangıç <span class="text-amber-400">*</span></label>
+            <input type="time" id="vcStartTime" required onchange="App.onVoiceTimeChange()" class="w-full bg-surface-input border border-surface-border rounded-lg px-2 py-2 text-zinc-100 focus:outline-none focus:border-amber-400">
+          </div>
+          <div>
+            <label class="block text-zinc-400 mb-1 font-semibold text-[11px]">Süre (Dk)</label>
+            <input type="number" id="vcDuration" min="5" step="5" value="30" onchange="App.onVoiceDurationChange()" class="w-full bg-surface-input border border-surface-border rounded-lg px-2 py-2 text-zinc-100 focus:outline-none focus:border-amber-400">
+          </div>
+          <div>
+            <label class="block text-zinc-400 mb-1 font-semibold text-[11px]">Bitiş <span class="text-amber-400">*</span></label>
+            <input type="time" id="vcEndTime" required onchange="App.checkVoiceModalConflict()" class="w-full bg-surface-input border border-surface-border rounded-lg px-2 py-2 text-zinc-100 focus:outline-none focus:border-amber-400">
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-zinc-400 mb-1 font-semibold text-[11px]">Telefon</label>
+          <input type="tel" id="vcPhone" placeholder="05XX XXX XX XX" class="w-full bg-surface-input border border-surface-border rounded-lg px-3 py-2 text-zinc-100 focus:outline-none focus:border-amber-400">
+        </div>
+
+        <div>
+          <label class="block text-zinc-400 mb-1 font-semibold text-[11px]">Not</label>
+          <textarea id="vcNotes" rows="1" class="w-full bg-surface-input border border-surface-border rounded-lg px-3 py-1.5 text-zinc-100 focus:outline-none focus:border-amber-400 text-xs"></textarea>
+        </div>
+
+        <div class="pt-1 flex items-center justify-end gap-2">
+          <button type="button" onclick="UI.closeVoiceConfirmModal()" class="px-3.5 py-2 bg-surface-card hover:bg-zinc-800 text-zinc-300 font-semibold rounded-lg">
+            Vazgeç
+          </button>
+          <button type="submit" id="btnVoiceConfirmSubmit" class="px-4 py-2 gold-gradient hover:opacity-95 text-zinc-950 font-bold rounded-lg flex items-center gap-1 shadow-md shadow-amber-500/20">
+            <i data-lucide="check" class="w-3.5 h-3.5 stroke-[2.5]"></i> Onayla
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL 3: MANUEL RANDEVU EKLEME / DÜZENLEME -->
+  <div id="manualModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-3 hidden">
+    <div class="w-full max-w-md bg-[#0e1017] border-t sm:border border-zinc-800 rounded-t-2xl sm:rounded-2xl p-4 max-h-[92vh] overflow-y-auto space-y-3 animate-slide-up sm:animate-none shadow-2xl">
+      
+      <div class="flex items-center justify-between pb-2 border-b border-zinc-800/80">
+        <div class="flex items-center gap-2">
+          <div class="w-7 h-7 rounded-lg bg-amber-500/15 border border-amber-500/30 text-amber-400 flex items-center justify-center">
+            <i id="manualModalIcon" data-lucide="calendar-plus" class="w-3.5 h-3.5"></i>
+          </div>
+          <div>
+            <h3 id="manualModalTitle" class="text-xs font-bold text-zinc-100">Randevu Oluştur</h3>
+            <p class="text-[10px] text-zinc-400">Ramazan Toz Müşteri Takvimi</p>
+          </div>
+        </div>
+        <button onclick="UI.closeManualModal()" class="text-zinc-400 hover:text-zinc-100 p-1 rounded-lg">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+      <div id="manualConflictAlert" class="hidden bg-rose-950/40 border border-rose-800/60 rounded-xl p-2.5 text-xs text-rose-300 space-y-0.5">
+        <div class="flex items-center gap-1 font-bold text-[11px]">
+          <i data-lucide="alert-triangle" class="w-3.5 h-3.5 text-rose-400 shrink-0"></i>
+          <span>Saat Çakışması Uyarısı</span>
+        </div>
+        <p id="manualConflictMessage" class="text-[11px]">Seçilen saatte başka randevu mevcut.</p>
+      </div>
+
+      <div id="manualHoursAlert" class="hidden bg-amber-950/30 border border-amber-800/60 rounded-xl p-2 text-xs text-amber-300 flex items-center gap-1.5">
+        <i data-lucide="info" class="w-3.5 h-3.5 shrink-0"></i>
+        <span id="manualHoursMessage" class="text-[11px]">Randevu mesai saatleri dışındadır.</span>
+      </div>
+
+      <form id="manualAppointmentForm" onsubmit="App.onManualFormSubmit(event)" class="space-y-2.5 text-xs">
+        <input type="hidden" id="mfEditId" value="">
+
+        <div>
+          <label class="block text-zinc-400 mb-1 font-semibold text-[11px]">Müşteri Adı Soyadı <span class="text-amber-400">*</span></label>
+          <input type="text" id="mfCustomerName" required placeholder="Örn: Ahmet Yılmaz" class="w-full bg-surface-input border border-surface-border rounded-lg px-3 py-2 text-zinc-100 focus:outline-none focus:border-amber-400 font-medium">
+        </div>
+
+        <!-- Quick Service Chips (Compact) -->
+        <div>
+          <label class="block text-zinc-400 mb-1 font-semibold text-[11px]">Hızlı Hizmet Seçimi</label>
+          <div class="grid grid-cols-3 gap-1">
+            <button type="button" onclick="UI.selectQuickService('Saç kesimi', 30)" class="py-1 px-1.5 rounded-lg bg-surface-card border border-surface-border hover:border-amber-500/50 text-[10px] font-semibold text-zinc-300 transition-colors truncate">
+              ✂️ Saç (30 dk)
+            </button>
+            <button type="button" onclick="UI.selectQuickService('Sakal tıraşı', 20)" class="py-1 px-1.5 rounded-lg bg-surface-card border border-surface-border hover:border-amber-500/50 text-[10px] font-semibold text-zinc-300 transition-colors truncate">
+              🪒 Sakal (20 dk)
+            </button>
+            <button type="button" onclick="UI.selectQuickService('Saç ve sakal', 45)" class="py-1 px-1.5 rounded-lg bg-surface-card border border-surface-border hover:border-amber-500/50 text-[10px] font-semibold text-zinc-300 transition-colors truncate">
+              ⭐ Saç+Sakal
+            </button>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block text-zinc-400 mb-1 font-semibold text-[11px]">Tarih <span class="text-amber-400">*</span></label>
+            <input type="date" id="mfDate" required onchange="App.checkManualModalConflict()" class="w-full bg-surface-input border border-surface-border rounded-lg px-2.5 py-2 text-zinc-100 focus:outline-none focus:border-amber-400">
+          </div>
+          <div>
+            <label class="block text-zinc-400 mb-1 font-semibold text-[11px]">Hizmet Türü</label>
+            <select id="mfService" onchange="App.onManualServiceChange()" class="w-full bg-surface-input border border-surface-border rounded-lg px-2 py-2 text-zinc-100 focus:outline-none focus:border-amber-400">
+              <option value="Saç kesimi">Saç kesimi</option>
+              <option value="Sakal tıraşı">Sakal tıraşı</option>
+              <option value="Saç ve sakal">Saç ve sakal</option>
+              <option value="Çocuk tıraşı">Çocuk tıraşı</option>
+              <option value="Saç yıkama">Saç yıkama</option>
+              <option value="Diğer">Diğer</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-3 gap-1.5">
+          <div>
+            <label class="block text-zinc-400 mb-1 font-semibold text-[11px]">Başlangıç <span class="text-amber-400">*</span></label>
+            <input type="time" id="mfStartTime" required onchange="App.onManualTimeChange()" class="w-full bg-surface-input border border-surface-border rounded-lg px-2 py-2 text-zinc-100 focus:outline-none focus:border-amber-400">
+          </div>
+          <div>
+            <label class="block text-zinc-400 mb-1 font-semibold text-[11px]">Süre (Dk)</label>
+            <input type="number" id="mfDuration" min="5" step="5" value="30" onchange="App.onManualDurationChange()" class="w-full bg-surface-input border border-surface-border rounded-lg px-2 py-2 text-zinc-100 focus:outline-none focus:border-amber-400">
+          </div>
+          <div>
+            <label class="block text-zinc-400 mb-1 font-semibold text-[11px]">Bitiş <span class="text-amber-400">*</span></label>
+            <input type="time" id="mfEndTime" required onchange="App.checkManualModalConflict()" class="w-full bg-surface-input border border-surface-border rounded-lg px-2 py-2 text-zinc-100 focus:outline-none focus:border-amber-400">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block text-zinc-400 mb-1 font-semibold text-[11px]">Telefon</label>
+            <input type="tel" id="mfPhone" placeholder="05XX XXX XX XX" class="w-full bg-surface-input border border-surface-border rounded-lg px-3 py-2 text-zinc-100 focus:outline-none focus:border-amber-400">
+          </div>
+          <div>
+            <label class="block text-zinc-400 mb-1 font-semibold text-[11px]">Durum</label>
+            <select id="mfStatus" class="w-full bg-surface-input border border-surface-border rounded-lg px-2 py-2 text-zinc-100 focus:outline-none focus:border-amber-400">
+              <option value="planned">Planlandı</option>
+              <option value="completed">Tamamlandı</option>
+              <option value="cancelled">İptal Edildi</option>
+              <option value="no_show">Gelmedi</option>
+            </select>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-zinc-400 mb-1 font-semibold text-[11px]">Not</label>
+          <textarea id="mfNotes" rows="1" placeholder="Örn: Yıkama dahil..." class="w-full bg-surface-input border border-surface-border rounded-lg px-3 py-1.5 text-zinc-100 focus:outline-none focus:border-amber-400 text-xs"></textarea>
+        </div>
+
+        <div class="pt-1 flex items-center justify-end gap-2">
+          <button type="button" onclick="UI.closeManualModal()" class="px-3.5 py-2 bg-surface-card hover:bg-zinc-800 text-zinc-300 font-semibold rounded-lg">
+            Vazgeç
+          </button>
+          <button type="submit" id="btnManualSubmit" class="px-4 py-2 gold-gradient hover:opacity-95 text-zinc-950 font-bold rounded-lg flex items-center gap-1 shadow-md shadow-amber-500/20">
+            <i data-lucide="check" class="w-3.5 h-3.5 stroke-[2.5]"></i> Kaydet
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL 4: AYARLAR MODALI -->
+  <div id="settingsModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-3 hidden">
+    <div class="w-full max-w-md bg-[#0e1017] border-t sm:border border-zinc-800 rounded-t-2xl sm:rounded-2xl p-4 max-h-[92vh] overflow-y-auto space-y-3 animate-slide-up sm:animate-none shadow-2xl">
+      
+      <div class="flex items-center justify-between pb-2 border-b border-zinc-800/80">
+        <div class="flex items-center gap-2">
+          <div class="w-7 h-7 rounded-lg bg-surface-card text-amber-400 flex items-center justify-center border border-zinc-700/60">
+            <i data-lucide="sliders" class="w-3.5 h-3.5"></i>
+          </div>
+          <div>
+            <h3 class="text-xs font-bold text-zinc-100">Salon Ayarları</h3>
+            <p class="text-[10px] text-zinc-400">Ramazan Toz Barber Studio</p>
+          </div>
+        </div>
+        <button onclick="UI.closeSettingsModal()" class="text-zinc-400 hover:text-zinc-100 p-1 rounded-lg">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+      <form onsubmit="App.onSaveSettingsSubmit(event)" class="space-y-3 text-xs">
+        <div>
+          <label class="block text-zinc-400 mb-1 font-semibold text-[11px]">Berber / Salon Adı</label>
+          <input type="text" id="setBusinessName" required class="w-full bg-surface-input border border-surface-border rounded-lg px-3 py-2 text-zinc-100 focus:outline-none focus:border-amber-400 font-medium">
+        </div>
+
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block text-zinc-400 mb-1 font-semibold text-[11px]">Mesai Başlangıcı</label>
+            <input type="time" id="setWorkStart" required class="w-full bg-surface-input border border-surface-border rounded-lg px-2.5 py-2 text-zinc-100 focus:outline-none focus:border-amber-400">
+          </div>
+          <div>
+            <label class="block text-zinc-400 mb-1 font-semibold text-[11px]">Mesai Bitişi</label>
+            <input type="time" id="setWorkEnd" required class="w-full bg-surface-input border border-surface-border rounded-lg px-2.5 py-2 text-zinc-100 focus:outline-none focus:border-amber-400">
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-zinc-400 mb-1 font-semibold text-[11px]">Varsayılan Süre (Dk)</label>
+          <select id="setDefaultDuration" class="w-full bg-surface-input border border-surface-border rounded-lg px-2.5 py-2 text-zinc-100 focus:outline-none focus:border-amber-400">
+            <option value="15">15 Dakika</option>
+            <option value="20">20 Dakika</option>
+            <option value="30">30 Dakika (Standart)</option>
+            <option value="45">45 Dakika</option>
+            <option value="60">60 Dakika (1 Saat)</option>
+          </select>
+        </div>
+
+        <!-- Data management -->
+        <div class="pt-2 border-t border-zinc-800 space-y-1.5">
+          <label class="block text-zinc-400 font-bold uppercase tracking-wider text-[9px]">Veri Yedekleme & İşlemler</label>
+          <div class="grid grid-cols-2 gap-1.5">
+            <button type="button" onclick="App.exportData()" class="py-2 px-2 bg-surface-card hover:bg-zinc-800 text-zinc-300 rounded-lg flex items-center justify-center gap-1 text-[11px] border border-surface-border">
+              <i data-lucide="download" class="w-3 h-3 text-amber-400"></i> Yedeği İndir
+            </button>
+            <label class="py-2 px-2 bg-surface-card hover:bg-zinc-800 text-zinc-300 rounded-lg flex items-center justify-center gap-1 text-[11px] cursor-pointer border border-surface-border">
+              <i data-lucide="upload" class="w-3 h-3 text-amber-400"></i> Yedeği Yükle
+              <input type="file" accept=".json" class="hidden" onchange="App.importData(event)">
+            </label>
+          </div>
+          <div class="grid grid-cols-2 gap-1.5 pt-0.5">
+            <button type="button" onclick="App.loadDemoSeedData()" class="py-2 px-2 bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 border border-amber-500/30 rounded-lg flex items-center justify-center gap-1 text-[11px] font-semibold">
+              <i data-lucide="sparkles" class="w-3 h-3"></i> Örnek Veri Yükle
+            </button>
+            <button type="button" onclick="App.resetAllData()" class="py-2 px-2 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/30 rounded-lg flex items-center justify-center gap-1 text-[11px] font-semibold">
+              <i data-lucide="trash-2" class="w-3 h-3"></i> Sıfırla
+            </button>
+          </div>
+        </div>
+
+        <div class="pt-1 flex justify-end gap-2">
+          <button type="button" onclick="UI.closeSettingsModal()" class="px-3.5 py-1.5 bg-surface-card hover:bg-zinc-800 text-zinc-300 font-semibold rounded-lg">
+            Kapat
+          </button>
+          <button type="submit" class="px-4 py-1.5 gold-gradient hover:opacity-95 text-zinc-950 font-bold rounded-lg shadow-md shadow-amber-500/20">
+            Kaydet
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL 5: SİLME ONAY MODALI -->
+  <div id="deleteConfirmModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 hidden">
+    <div class="w-full max-w-xs bg-[#0e1017] border border-zinc-800 rounded-2xl p-4 space-y-3 shadow-2xl">
+      <div class="flex items-center gap-2.5">
+        <div class="w-8 h-8 rounded-xl bg-rose-500/15 border border-rose-500/30 text-rose-400 flex items-center justify-center shrink-0">
+          <i data-lucide="alert-triangle" class="w-4 h-4"></i>
+        </div>
+        <div>
+          <h4 class="text-xs font-bold text-zinc-100">Randevuyu Sil?</h4>
+          <p class="text-[10px] text-zinc-400">Bu işlem geri alınamaz.</p>
+        </div>
+      </div>
+      <p id="deleteConfirmText" class="text-xs text-zinc-300 bg-surface-input p-2.5 rounded-lg border border-surface-border">
+        Seçilen randevu silinecek.
+      </p>
+      <div class="flex justify-end gap-1.5 text-xs">
+        <button onclick="UI.closeDeleteModal()" class="px-3 py-1.5 bg-surface-card hover:bg-zinc-800 text-zinc-300 font-semibold rounded-lg">
+          Vazgeç
+        </button>
+        <button id="btnConfirmDeleteAction" class="px-3 py-1.5 bg-rose-600 hover:bg-rose-500 text-white font-bold rounded-lg shadow-md shadow-rose-600/20">
+          Sil
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST CONTAINER -->
+  <div id="toastContainer" class="fixed top-4 left-1/2 -translate-x-1/2 z-50 flex flex-col items-center gap-2 pointer-events-none w-full max-w-xs px-3"></div>
+
+  <!-- ============================================================== -->
+  <!-- JAVASCRIPT APPLICATION CORE                                    -->
+  <!-- ============================================================== -->
+  <script>
+    const APP_CONFIG = {
+      STORAGE_APPOINTMENTS_KEY: 'barberflow_appointments_v1',
+      STORAGE_SETTINGS_KEY: 'barberflow_settings_v1',
+      DEFAULT_SETTINGS: {
+        businessName: 'Ramazan Toz',
+        workStart: '09:00',
+        workEnd: '21:00',
+        defaultDuration: 30
+      },
+      SERVICES_META: {
+        'Saç kesimi': { duration: 30, color: 'text-amber-400' },
+        'Sakal tıraşı': { duration: 20, color: 'text-cyan-400' },
+        'Saç ve sakal': { duration: 45, color: 'text-emerald-400' },
+        'Çocuk tıraşı': { duration: 30, color: 'text-purple-400' },
+        'Saç yıkama': { duration: 15, color: 'text-blue-400' },
+        'Diğer': { duration: 30, color: 'text-zinc-400' }
+      }
+    };
+
+    const StorageManager = {
+      getAppointments() {
+        try {
+          const raw = localStorage.getItem(APP_CONFIG.STORAGE_APPOINTMENTS_KEY);
+          if (!raw) return [];
+          const data = JSON.parse(raw);
+          return Array.isArray(data) ? data : [];
+        } catch (e) {
+          console.error(e);
+          return [];
+        }
+      },
+
+      saveAppointments(appointments) {
+        try {
+          localStorage.setItem(APP_CONFIG.STORAGE_APPOINTMENTS_KEY, JSON.stringify(appointments));
+          return true;
+        } catch (e) {
+          UI.showToast('Depolama hatası oluştu.', 'error');
+          return false;
+        }
+      },
+
+      getSettings() {
+        try {
+          const raw = localStorage.getItem(APP_CONFIG.STORAGE_SETTINGS_KEY);
+          if (!raw) return { ...APP_CONFIG.DEFAULT_SETTINGS };
+          const parsed = JSON.parse(raw);
+          if (!parsed.businessName || parsed.businessName.includes('BarberFlow')) {
+            parsed.businessName = 'Ramazan Toz';
+          }
+          return { ...APP_CONFIG.DEFAULT_SETTINGS, ...parsed };
+        } catch (e) {
+          return { ...APP_CONFIG.DEFAULT_SETTINGS };
+        }
+      },
+
+      saveSettings(settings) {
+        try {
+          localStorage.setItem(APP_CONFIG.STORAGE_SETTINGS_KEY, JSON.stringify(settings));
+          return true;
+        } catch (e) {
+          return false;
+        }
+      }
+    };
+
+    const DateUtils = {
+      toISODateString(date) {
+        const y = date.getFullYear();
+        const m = String(date.getMonth() + 1).padStart(2, '0');
+        const d = String(date.getDate()).padStart(2, '0');
+        return `${y}-${m}-${d}`;
+      },
+
+      parseISODate(isoStr) {
+        if (!isoStr) return new Date();
+        const [y, m, d] = isoStr.split('-').map(Number);
+        return new Date(y, m - 1, d, 12, 0, 0);
+      },
+
+      formatTurkishFull(isoStr) {
+        const d = this.parseISODate(isoStr);
+        return d.toLocaleDateString('tr-TR', {
+          weekday: 'long',
+          day: 'numeric',
+          month: 'long'
+        });
+      },
+
+      formatDayShort(isoStr) {
+        const d = this.parseISODate(isoStr);
+        return d.toLocaleDateString('tr-TR', { weekday: 'short' });
+      },
+
+      timeToMinutes(timeStr) {
+        if (!timeStr || !timeStr.includes(':')) return 0;
+        const [h, m] = timeStr.split(':').map(Number);
+        return (h || 0) * 60 + (m || 0);
+      },
+
+      minutesToTime(totalMinutes) {
+        const clamped = Math.max(0, Math.min(totalMinutes, 23 * 60 + 59));
+        const h = Math.floor(clamped / 60);
+        const m = clamped % 60;
+        return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
+      },
+
+      addMinutesToTime(timeStr, minutes) {
+        const mins = this.timeToMinutes(timeStr) + parseInt(minutes, 10);
+        return this.minutesToTime(mins);
+      }
+    };
+
+    const ConflictEngine = {
+      checkConflict(candidate, excludeId = null) {
+        const allAppointments = StorageManager.getAppointments();
+        const candidateDate = candidate.date;
+        const candStartMins = DateUtils.timeToMinutes(candidate.startTime);
+        const candEndMins = DateUtils.timeToMinutes(candidate.endTime);
+
+        if (candEndMins <= candStartMins) {
+          return {
+            hasConflict: true,
+            isInvalidTime: true,
+            message: 'Bitiş saati başlangıç saatinden sonra olmalıdır.'
+          };
+        }
+
+        const sameDayAppointments = allAppointments.filter(app => {
+          if (app.id === excludeId) return false;
+          if (app.date !== candidateDate) return false;
+          if (app.status === 'cancelled' || app.status === 'no_show') return false;
+          return true;
+        });
+
+        for (const app of sameDayAppointments) {
+          const appStartMins = DateUtils.timeToMinutes(app.startTime);
+          const appEndMins = DateUtils.timeToMinutes(app.endTime);
+
+          if (candStartMins < appEndMins && candEndMins > appStartMins) {
+            return {
+              hasConflict: true,
+              isInvalidTime: false,
+              conflictingAppointment: app,
+              message: `Çakışma: "${app.customerName}" (${app.startTime}-${app.endTime}) ile örtüşüyor!`
+            };
+          }
+        }
+
+        return { hasConflict: false };
+      }
+    };
+
+    const TurkishNLPParser = {
+      DAYS: {
+        pazar: 0, pazartesi: 1, salı: 2, sali: 2, çarşamba: 3, carsamba: 3,
+        perşembe: 4, persembe: 4, cuma: 5, cumartesi: 6
+      },
+      MONTHS: {
+        ocak: 0, şubat: 1, subat: 1, mart: 2, nisan: 3, mayıs: 4, mayis: 4, haziran: 5,
+        temmuz: 6, ağustos: 7, agustos: 7, eylül: 8, eylul: 8, ekim: 9, kasım: 10, kasim: 10, aralık: 11, aralik: 11
+      },
+      SERVICES: [
+        { key: 'saç ve sakal', label: 'Saç ve sakal', defaultDuration: 45, pattern: /(?:^|\s)(saç\s*(?:ve|\+)?\s*sakal|sac\s*(?:ve|\+)?\s*sakal)(?=$|\s|[.,;:!?])/i },
+        { key: 'saç kesimi', label: 'Saç kesimi', defaultDuration: 30, pattern: /(?:^|\s)(saç\s*(?:kesimi|tıraşı|traşı)?|sac\s*(?:kesimi|tirasi|trasi)?)(?=$|\s|[.,;:!?])/i },
+        { key: 'sakal tıraşı', label: 'Sakal tıraşı', defaultDuration: 20, pattern: /(?:^|\s)(sakal\s*(?:tıraşı|traşı|kesimi)?|sakal\s*(?:tirasi|trasi)?)(?=$|\s|[.,;:!?])/i },
+        { key: 'çocuk tıraşı', label: 'Çocuk tıraşı', defaultDuration: 30, pattern: /(?:^|\s)(çocuk|cocuk)\s*(?:tıraşı|traşı|kesimi)?(?=$|\s|[.,;:!?])/i },
+        { key: 'saç yıkama', label: 'Saç yıkama', defaultDuration: 15, pattern: /(?:^|\s)(saç\s*yıkama|sac\s*yikama|yıkama|yikama)(?=$|\s|[.,;:!?])/i }
+      ],
+
+      normalizeTr(str) {
+        return str ? str.toLocaleLowerCase('tr-TR') : '';
+      },
+
+      parse(text, referenceDate = new Date()) {
+        const warnings = [];
+        const missingFields = [];
+        let confidence = 'high';
+
+        if (!text || typeof text !== 'string') {
+          return {
+            customerName: '',
+            date: DateUtils.toISODateString(referenceDate),
+            startTime: '10:00',
+            endTime: '10:30',
+            service: 'Saç kesimi',
+            durationMinutes: 30,
+            confidence: 'low',
+            missingFields: ['customerName', 'startTime'],
+            warnings: ['Sesli komut algılanamadı.']
+          };
+        }
+
+        const rawText = text.trim();
+        const normalized = this.normalizeTr(rawText);
+
+        const timeMatches = normalized.match(/\b\d{1,2}[:.]\d{2}\b/g) || [];
+        if (timeMatches.length > 1 && (normalized.includes(' ve ') || normalized.includes(' ile ') || normalized.includes(' ve saat'))) {
+          warnings.push('Cümlede birden fazla saat algılandı.');
+          confidence = 'low';
+        }
+
+        // Date
+        let targetDate = null;
+        const isNextWeek = /(?:^|\s)(gelecek|önümüzdeki|onumuzdeki)(?:\s*hafta)?(?=$|\s)/.test(normalized);
+
+        if (/(?:^|\s)(bugün|bugun)(?=$|\s|[.,;:!?])/.test(normalized)) {
+          targetDate = new Date(referenceDate);
+        } else if (/(?:^|\s)(yarın|yarin)(?=$|\s|[.,;:!?])/.test(normalized)) {
+          targetDate = new Date(referenceDate);
+          targetDate.setDate(targetDate.getDate() + 1);
+        } else if (/(?:^|\s)(öbür\s*gün|obur\s*gun|yarından sonra)(?=$|\s|[.,;:!?])/.test(normalized)) {
+          targetDate = new Date(referenceDate);
+          targetDate.setDate(targetDate.getDate() + 2);
+        }
+
+        if (!targetDate) {
+          for (const [dayName, dayIndex] of Object.entries(this.DAYS)) {
+            const reg = new RegExp(`(?:^|\\s)(?:(?:gelecek|önümüzdeki|onumuzdeki)\\s+)?${dayName}(?:\\s*günü|\\s*gunu)?(?=$|\\s|[.,;:!?])`, 'i');
+            if (reg.test(normalized)) {
+              targetDate = new Date(referenceDate);
+              const currentDay = targetDate.getDay();
+              let diff = dayIndex - currentDay;
+              if (diff <= 0) diff += 7;
+              if (/(?:^|\s)(gelecek|önümüzdeki|onumuzdeki)\s*hafta\b/.test(normalized)) {
+                diff += 7;
+              }
+              targetDate.setDate(targetDate.getDate() + diff);
+              break;
+            }
+          }
+        }
+
+        if (!targetDate) {
+          for (const [mName, mIndex] of Object.entries(this.MONTHS)) {
+            const monthRegex = new RegExp(`(?:^|\\s)(\\d{1,2})\\s*${mName}(?:\\s*(\\d{4}))?(?=$|\\s|[.,;:!?])`, 'i');
+            const match = normalized.match(monthRegex);
+            if (match) {
+              const day = parseInt(match[1], 10);
+              const year = match[2] ? parseInt(match[2], 10) : referenceDate.getFullYear();
+              targetDate = new Date(year, mIndex, day);
+              break;
+            }
+          }
+        }
+
+        if (!targetDate) {
+          targetDate = new Date(referenceDate);
+          warnings.push('Tarih belirtilmedi, "Bugün" seçildi.');
+          confidence = confidence === 'high' ? 'medium' : confidence;
+        }
+
+        const formattedDate = DateUtils.toISODateString(targetDate);
+
+        // Duration
+        let durationMinutes = null;
+        const durationMatch = normalized.match(/(\d+)\s*(?:dakika|dk|dakikada)/);
+        if (durationMatch) {
+          durationMinutes = parseInt(durationMatch[1], 10);
+        } else if (/(?:^|\s)(yarım\s*saat|yarim\s*saat)(?=$|\s|[.,;:!?])/.test(normalized)) {
+          durationMinutes = 30;
+        } else if (/(?:^|\s)(1\s*saat|bir\s*saat)(?=$|\s|[.,;:!?])/.test(normalized)) {
+          durationMinutes = 60;
+        }
+
+        // Time
+        let startTime = null;
+        let endTime = null;
+
+        const invalidTimeMatch = normalized.match(/\b([2-9]\d|\d{2})[:.]([6-9]\d)\b/);
+        if (invalidTimeMatch) {
+          warnings.push(`Geçersiz saat ifadesi algılandı (${invalidTimeMatch[0]}).`);
+          confidence = 'low';
+          missingFields.push('startTime');
+        }
+
+        const rangeMatch = normalized.match(/(\d{1,2})[:.](\d{2})\s*(?:–|-|ile|\/)\s*(\d{1,2})[:.](\d{2})/);
+        if (rangeMatch && !invalidTimeMatch) {
+          const sh = parseInt(rangeMatch[1], 10);
+          const sm = parseInt(rangeMatch[2], 10);
+          const eh = parseInt(rangeMatch[3], 10);
+          const em = parseInt(rangeMatch[4], 10);
+          if (sh <= 23 && sm <= 59 && eh <= 23 && em <= 59) {
+            startTime = `${String(sh).padStart(2, '0')}:${String(sm).padStart(2, '0')}`;
+            endTime = `${String(eh).padStart(2, '0')}:${String(em).padStart(2, '0')}`;
+            durationMinutes = (eh * 60 + em) - (sh * 60 + sm);
+          }
+        }
+
+        if (!startTime && !invalidTimeMatch) {
+          const singleTimeMatch = normalized.match(/\b(\d{1,2})[:.](\d{2})(?:'?(?:de|da|te|ta|ye|ya))?\b/);
+          if (singleTimeMatch) {
+            const h = parseInt(singleTimeMatch[1], 10);
+            const m = parseInt(singleTimeMatch[2], 10);
+            if (h <= 23 && m <= 59) {
+              startTime = `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
+            }
+          }
+        }
+
+        if (!startTime && !invalidTimeMatch) {
+          let hour = null;
+          let minute = 0;
+
+          if (/(?:^|\s)(beş\s*buçuk|bes\s*bucuk)(?:ta|te)?(?=$|\s|[.,;:!?])/.test(normalized)) { hour = 17; minute = 30; }
+          else if (/(?:^|\s)(dört\s*buçuk|dort\s*bucuk)(?:ta|te)?(?=$|\s|[.,;:!?])/.test(normalized)) { hour = 16; minute = 30; }
+          else if (/(?:^|\s)(üç\s*buçuk|uc\s*bucuk)(?:ta|te)?(?=$|\s|[.,;:!?])/.test(normalized)) { hour = 15; minute = 30; }
+          else if (/(?:^|\s)(iki\s*buçuk|iki\s*bucuk)(?:ta|te)?(?=$|\s|[.,;:!?])/.test(normalized)) { hour = 14; minute = 30; }
+          else if (/(?:^|\s)(bir\s*buçuk|bir\s*bucuk)(?:ta|te)?(?=$|\s|[.,;:!?])/.test(normalized)) { hour = 13; minute = 30; }
+          else if (/(?:^|\s)(on\s*iki\s*buçuk)(?:ta|te)?(?=$|\s|[.,;:!?])/.test(normalized)) { hour = 12; minute = 30; }
+          else if (/(?:^|\s)(on\s*bir\s*buçuk)(?:ta|te)?(?=$|\s|[.,;:!?])/.test(normalized)) { hour = 11; minute = 30; }
+          else if (/(?:^|\s)(on\s*buçuk)(?:ta|te)?(?=$|\s|[.,;:!?])/.test(normalized)) { hour = 10; minute = 30; }
+          else if (/(?:^|\s)(dokuz\s*buçuk)(?:ta|te)?(?=$|\s|[.,;:!?])/.test(normalized)) { hour = 9; minute = 30; }
+
+          if (hour === null) {
+            if (/on\s*yedi\s*otuz/.test(normalized)) { hour = 17; minute = 30; }
+            else if (/on\s*yedi/.test(normalized)) { hour = 17; minute = 0; }
+            else if (/on\s*sekiz\s*otuz/.test(normalized)) { hour = 18; minute = 30; }
+            else if (/on\s*sekiz/.test(normalized)) { hour = 18; minute = 0; }
+            else if (/on\s*dokuz\s*otuz/.test(normalized)) { hour = 19; minute = 30; }
+            else if (/on\s*dokuz/.test(normalized)) { hour = 19; minute = 0; }
+            else if (/yirmi\s*otuz/.test(normalized)) { hour = 20; minute = 30; }
+            else if (/yirmi/.test(normalized)) { hour = 20; minute = 0; }
+            else if (/on\s*altı|on\s*alti/.test(normalized)) { hour = 16; minute = 0; }
+            else if (/on\s*beş|on\s*bes/.test(normalized)) { hour = 15; minute = 0; }
+            else if (/on\s*dört|on\s*dort/.test(normalized)) { hour = 14; minute = 0; }
+          }
+
+          if (hour === null) {
+            const wordHourMatch = normalized.match(/(?:saat\s*)?(sabah\s*|akşam\s*|aksam\s*|öğleden sonra\s*|ogleden sonra\s*)?(üçte|ucte|dörte|dortte|beşte|beste|altıda|altida|yedide|sekizde|dokuzda|onda|on birde|on ikide|üç|uc|dört|dort|beş|bes|altı|alti|yedi|sekiz|dokuz|on|on bir|on iki)(?=$|\s|[.,;:!?])/);
+            if (wordHourMatch) {
+              const prefix = wordHourMatch[1] || '';
+              const w = wordHourMatch[2].replace(/(?:te|ta|de|da|e|a)$/, '');
+              const numMap = { 'üç': 3, 'uc': 3, 'dört': 4, 'dort': 4, 'beş': 5, 'bes': 5, 'altı': 6, 'alti': 6, 'yedi': 7, 'sekiz': 8, 'dokuz': 9, 'on': 10, 'on bir': 11, 'on iki': 12 };
+              let h = numMap[w];
+              if (h) {
+                if (prefix.includes('öğleden') || prefix.includes('ogleden') || prefix.includes('akşam') || prefix.includes('aksam') || (h >= 1 && h <= 8 && !prefix.includes('sabah'))) {
+                  h = h < 9 ? h + 12 : h;
+                }
+                hour = h;
+              }
+            }
+          }
+
+          if (hour === null) {
+            const numHourMatch = normalized.match(/(?:saat\s+)?([0-2]?\d)'?(?:de|da|te|ta)\b/);
+            if (numHourMatch) {
+              let h = parseInt(numHourMatch[1], 10);
+              if (h >= 1 && h <= 7) h += 12;
+              if (h <= 23) hour = h;
+            }
+          }
+
+          if (hour !== null) {
+            startTime = `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`;
+          }
+        }
+
+        // Service
+        let service = 'Saç kesimi';
+        for (const s of this.SERVICES) {
+          if (s.pattern.test(normalized)) {
+            service = s.label;
+            if (!durationMinutes) {
+              durationMinutes = s.defaultDuration;
+            }
+            break;
+          }
+        }
+
+        if (!durationMinutes) {
+          const settings = StorageManager.getSettings();
+          durationMinutes = settings.defaultDuration || 30;
+        }
+
+        if (startTime && !endTime) {
+          endTime = DateUtils.addMinutesToTime(startTime, durationMinutes);
+        }
+
+        // Customer Name
+        let cleanedForName = rawText;
+        const datePatterns = [
+          /(?:^|\s)(bugün|bugun|yarın|yarin|öbür\s*gün|obur\s*gun|yarından sonra|gelecek\s*hafta|önümüzdeki\s*hafta|onumuzdeki\s*hafta|gelecek|önümüzdeki|onumuzdeki)(?=$|\s|[.,;:!?])/gi,
+          /(?:^|\s)(pazartesi|salı|sali|çarşamba|carsamba|perşembe|persembe|cuma|cumartesi|pazar)(?:\s*günü|\s*gunu)?(?=$|\s|[.,;:!?])/gi,
+          /(?:^|\s)\d{1,2}\s*(?:ocak|şubat|subat|mart|nisan|mayıs|mayis|haziran|temmuz|ağustos|agustos|eylül|eylul|ekim|kasım|kasim|aralık|aralik)(?:\s*\d{4})?(?=$|\s|[.,;:!?])/gi
+        ];
+        datePatterns.forEach(p => { cleanedForName = cleanedForName.replace(p, ' '); });
+
+        const timePatterns = [
+          /\b\d{1,2}[:.]\d{2}\s*(?:–|-|ile|\/)?\s*(?:\d{1,2}[:.]\d{2})?\b/gi,
+          /(?:^|\s)(on yedi otuz|on sekiz otuz|on dokuz otuz|on yedi|on sekiz|on dokuz|yirmi otuz|yirmi|beş buçuk|bes bucuk|dört buçuk|dort bucuk|üç buçuk|uc bucuk|iki buçuk|bir buçuk)(?:ta|te)?(?=$|\s|[.,;:!?])/gi,
+          /(?:^|\s)(saat\s*)?(sabah|akşam|aksam|öğleden sonra|ogleden sonra)\b/gi,
+          /(?:^|\s)(üçte|ucte|dörte|dortte|beşte|beste|altıda|altida|yedide|sekizde|dokuzda|onda|on birde|on ikide)(?=$|\s|[.,;:!?])/gi,
+          /\b[0-2]?\d'?(?:de|da|te|ta|ye|ya)\b/gi
+        ];
+        timePatterns.forEach(p => { cleanedForName = cleanedForName.replace(p, ' '); });
+
+        cleanedForName = cleanedForName.replace(/\b\d+\s*(?:dakika|dk|dakikada|saat)\b/gi, ' ');
+        cleanedForName = cleanedForName.replace(/(?:^|\s)(yarım saat|bir saat|yarim saat)(?=$|\s|[.,;:!?])/gi, ' ');
+
+        const servicePatterns = [
+          /(?:^|\s)(saç\s*(?:ve|\+)?\s*sakal|sac\s*(?:ve|\+)?\s*sakal)(?=$|\s|[.,;:!?])/gi,
+          /(?:^|\s)(saç\s*(?:kesimi|tıraşı|traşı)?|sac\s*(?:kesimi|tirasi|trasi)?)(?=$|\s|[.,;:!?])/gi,
+          /(?:^|\s)(sakal\s*(?:tıraşı|traşı|kesimi)?|sakal\s*(?:tirasi|trasi)?)(?=$|\s|[.,;:!?])/gi,
+          /(?:^|\s)(çocuk|cocuk)\s*(?:tıraşı|traşı|kesimi)?(?=$|\s|[.,;:!?])/gi,
+          /(?:^|\s)(saç\s*yıkama|sac\s*yikama|yıkama|yikama)(?=$|\s|[.,;:!?])/gi
+        ];
+        servicePatterns.forEach(p => { cleanedForName = cleanedForName.replace(p, ' '); });
+
+        const noisePatterns = [
+          /(?:^|\s)(günü|gunu|arası|arasi|ile|ve|var|al|sürsün|sursun|müşteriyi|musteriyi|randevu|randevusu|için|icin|olsun|saat|saatte|saati)(?=$|\s|[.,;:!?])/gi
+        ];
+        noisePatterns.forEach(p => { cleanedForName = cleanedForName.replace(p, ' '); });
+
+        cleanedForName = cleanedForName.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()?]/g, ' ');
+        cleanedForName = cleanedForName.replace(/'(?:e|a|ye|ya|in|ın|un|ün|nin|nın|nun|nün|de|da|te|ta)/gi, '');
+
+        const tokens = cleanedForName.trim().split(/\s+/).filter(t => {
+          const l = this.normalizeTr(t);
+          return t.length > 1 && !/^\d+$/.test(t) && !['ile', 've', 'var', 'günü', 'gunu', 'saat', 'önümüzdeki', 'gelecek', 'hafta'].includes(l);
+        });
+
+        let customerName = '';
+        if (tokens.length > 0) {
+          customerName = tokens.map(token => {
+            const clean = token.replace(/(?:'e|'a|'ye|'ya|'in|'ın|'ün|'un|'e|'a)$/i, '');
+            const lower = clean.toLocaleLowerCase('tr-TR');
+            return lower.charAt(0).toLocaleUpperCase('tr-TR') + lower.slice(1);
+          }).join(' ');
+        }
+
+        if (!customerName) {
+          missingFields.push('customerName');
+          warnings.push('Müşteri adı algılanamadı.');
+          confidence = 'low';
+        }
+
+        if (!startTime) {
+          missingFields.push('startTime');
+          warnings.push('Randevu saati algılanamadı.');
+          confidence = 'low';
+        }
+
+        return {
+          customerName: customerName || '',
+          date: formattedDate,
+          startTime: startTime || '',
+          endTime: endTime || '',
+          service,
+          durationMinutes,
+          phone: '',
+          notes: `Sesli komut: "${rawText}"`,
+          status: 'planned',
+          confidence,
+          missingFields: [...new Set(missingFields)],
+          warnings: [...new Set(warnings)],
+          rawText
+        };
+      }
+    };
+
+    const VoiceRecognitionManager = {
+      recognition: null,
+      isListening: false,
+      finalTranscript: '',
+      interimTranscript: '',
+
+      init() {
+        const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+        if (!SpeechRec) {
+          const el = document.getElementById('speechStatusIndicator');
+          if (el) {
+            el.innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-zinc-500"></span><span>Sesli Giriş Yok</span>';
+          }
+          return false;
+        }
+        return true;
+      },
+
+      toggle() {
+        if (this.isListening) {
+          this.stopAndProcess();
+        } else {
+          this.start();
+        }
+      },
+
+      start() {
+        const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+        if (!SpeechRec) {
+          UI.showToast('Tarayıcınız ses tanımayı desteklemiyor.', 'warning');
+          UI.openManualModal();
+          return;
+        }
+
+        try {
+          this.recognition = new SpeechRec();
+          this.recognition.lang = 'tr-TR';
+          this.recognition.continuous = true;
+          this.recognition.interimResults = true;
+          this.finalTranscript = '';
+          this.interimTranscript = '';
+
+          this.recognition.onstart = () => {
+            this.isListening = true;
+            UI.setVoiceListeningState(true);
+          };
+
+          this.recognition.onresult = (event) => {
+            let currentInterim = '';
+            for (let i = event.resultIndex; i < event.results.length; ++i) {
+              const res = event.results[i];
+              if (res.isFinal) {
+                this.finalTranscript += ' ' + res[0].transcript;
+              } else {
+                currentInterim += res[0].transcript;
+              }
+            }
+            this.interimTranscript = currentInterim;
+            const fullTranscript = (this.finalTranscript + ' ' + this.interimTranscript).trim();
+            const el = document.getElementById('voiceLiveTranscript');
+            if (el) {
+              el.innerText = fullTranscript ? `"${fullTranscript}"` : 'Sizi dinliyorum, lütfen randevuyu söyleyin...';
+            }
+          };
+
+          this.recognition.onerror = (event) => {
+            let msg = 'Ses algılanamadı.';
+            if (event.error === 'not-allowed') {
+              msg = 'Mikrofon izni verilmedi.';
+            } else if (event.error === 'network') {
+              msg = 'Ses tanıma için internet bağlantısı gerekir.';
+            }
+            UI.showToast(msg, 'error');
+            this.cancel();
+          };
+
+          this.recognition.onend = () => {
+            if (this.isListening) {
+              this.stopAndProcess();
+            }
+          };
+
+          this.recognition.start();
+        } catch (e) {
+          UI.showToast('Ses tanıma başlatılamadı.', 'error');
+          this.cancel();
+        }
+      },
+
+      stopAndProcess() {
+        this.isListening = false;
+        if (this.recognition) {
+          try { this.recognition.stop(); } catch(e) {}
+        }
+        UI.setVoiceListeningState(false);
+
+        const fullText = (this.finalTranscript + ' ' + this.interimTranscript).trim();
+        if (!fullText) {
+          UI.showToast('Herhangi bir ses veya komut algılanamadı.', 'warning');
+          return;
+        }
+
+        const selectedDate = DateUtils.parseISODate(App.state.currentDate);
+        const parsed = TurkishNLPParser.parse(fullText, selectedDate);
+        UI.openVoiceConfirmModal(parsed);
+      },
+
+      cancel() {
+        this.isListening = false;
+        if (this.recognition) {
+          try { this.recognition.abort(); } catch(e) {}
+        }
+        UI.setVoiceListeningState(false);
+      }
+    };
+
+    const App = {
+      state: {
+        currentDate: DateUtils.toISODateString(new Date()),
+        currentTab: 'timeline',
+        pendingDeleteId: null
+      },
+
+      init() {
+        const settings = StorageManager.getSettings();
+        document.getElementById('headerBusinessName').innerText = settings.businessName || 'Ramazan Toz';
+
+        VoiceRecognitionManager.init();
+        this.updateDateDisplay();
+        this.renderDayStrip();
+        this.renderTimeline();
+
+        window.addEventListener('keydown', (e) => {
+          if (e.key === 'Escape') UI.closeAllModals();
+        });
+
+        lucide.createIcons();
+      },
+
+      updateDateDisplay() {
+        const dateStr = DateUtils.formatTurkishFull(this.state.currentDate);
+        document.getElementById('currentDateDisplay').innerText = dateStr;
+        document.getElementById('nativeDateInput').value = this.state.currentDate;
+
+        const todayIso = DateUtils.toISODateString(new Date());
+        const pill = document.getElementById('btnTodayPill');
+        if (this.state.currentDate === todayIso) {
+          pill.className = 'text-[10px] px-2 py-0.5 rounded-md font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30';
+        } else {
+          pill.className = 'text-[10px] px-2 py-0.5 rounded-md font-semibold bg-zinc-800 text-zinc-400 hover:text-amber-400 transition-colors';
+        }
+      },
+
+      renderDayStrip() {
+        const strip = document.getElementById('quickDayStrip');
+        if (!strip) return;
+        strip.innerHTML = '';
+
+        const refDate = DateUtils.parseISODate(this.state.currentDate);
+        const days = [-2, -1, 0, 1, 2];
+        const todayIso = DateUtils.toISODateString(new Date());
+
+        days.forEach(offset => {
+          const d = new Date(refDate);
+          d.setDate(d.getDate() + offset);
+          const iso = DateUtils.toISODateString(d);
+          const isSelected = iso === this.state.currentDate;
+          const isToday = iso === todayIso;
+
+          const btn = document.createElement('button');
+          btn.onclick = () => {
+            App.state.currentDate = iso;
+            App.updateDateDisplay();
+            App.renderDayStrip();
+            App.renderCurrentView();
+          };
+
+          let cardStyle = 'bg-surface-card border-surface-border text-zinc-400 hover:border-zinc-700';
+          if (isSelected) {
+            cardStyle = 'gold-gradient text-zinc-950 font-extrabold shadow-sm';
+          } else if (isToday) {
+            cardStyle = 'bg-amber-500/10 border-amber-500/30 text-amber-300';
+          }
+
+          btn.className = `py-1.5 px-0.5 rounded-lg border flex flex-col items-center justify-center transition-all ${cardStyle}`;
+          btn.innerHTML = `
+            <span class="text-[9px] uppercase font-semibold tracking-wider ${isSelected ? 'text-zinc-950' : 'text-zinc-400'}">
+              ${DateUtils.formatDayShort(iso)}
+            </span>
+            <span class="text-xs font-extrabold mt-0.5">${d.getDate()}</span>
+          `;
+          strip.appendChild(btn);
+        });
+      },
+
+      navigateDay(delta) {
+        const d = DateUtils.parseISODate(this.state.currentDate);
+        d.setDate(d.getDate() + delta);
+        this.state.currentDate = DateUtils.toISODateString(d);
+        this.updateDateDisplay();
+        this.renderDayStrip();
+        this.renderCurrentView();
+      },
+
+      goToToday() {
+        this.state.currentDate = DateUtils.toISODateString(new Date());
+        this.updateDateDisplay();
+        this.renderDayStrip();
+        this.renderCurrentView();
+      },
+
+      onCustomDateSelected(isoValue) {
+        if (!isoValue) return;
+        this.state.currentDate = isoValue;
+        this.updateDateDisplay();
+        this.renderDayStrip();
+        this.renderCurrentView();
+      },
+
+      renderCurrentView() {
+        if (this.state.currentTab === 'timeline') {
+          this.renderTimeline();
+        } else {
+          this.renderSummary();
+        }
+        lucide.createIcons();
+      },
+
+      renderTimeline() {
+        const container = document.getElementById('timelineContainer');
+        const appointments = StorageManager.getAppointments();
+        const settings = StorageManager.getSettings();
+
+        const dayApps = appointments
+          .filter(a => a.date === this.state.currentDate)
+          .sort((a, b) => DateUtils.timeToMinutes(a.startTime) - DateUtils.timeToMinutes(b.startTime));
+
+        const activeCount = dayApps.filter(a => a.status === 'planned').length;
+        const totalCount = dayApps.length;
+        document.getElementById('timelineStatsText').innerText = 
+          `${totalCount} Randevu (${activeCount} aktif)`;
+
+        container.innerHTML = '';
+
+        const startMins = DateUtils.timeToMinutes(settings.workStart || '09:00');
+        const endMins = DateUtils.timeToMinutes(settings.workEnd || '21:00');
+
+        const now = new Date();
+        const isToday = this.state.currentDate === DateUtils.toISODateString(now);
+        const currentMinsNow = now.getHours() * 60 + now.getMinutes();
+
+        let currentSlotMins = startMins;
+
+        while (currentSlotMins < endMins) {
+          const slotTime = DateUtils.minutesToTime(currentSlotMins);
+          const nextSlotMins = currentSlotMins + 30;
+
+          const startingApps = dayApps.filter(a => {
+            const sm = DateUtils.timeToMinutes(a.startTime);
+            return sm >= currentSlotMins && sm < nextSlotMins;
+          });
+
+          const coveringApps = dayApps.filter(a => {
+            const sm = DateUtils.timeToMinutes(a.startTime);
+            const em = DateUtils.timeToMinutes(a.endTime);
+            return sm < currentSlotMins && em > currentSlotMins && a.status !== 'cancelled' && a.status !== 'no_show';
+          });
+
+          const isPast = isToday && currentSlotMins < currentMinsNow;
+
+          const slotRow = document.createElement('div');
+          slotRow.className = `flex gap-2 items-start min-w-0 ${isPast ? 'opacity-80' : ''}`;
+
+          const timeBadge = document.createElement('div');
+          timeBadge.className = 'w-10 pt-2 text-right text-[11px] font-bold text-zinc-400 shrink-0 font-mono';
+          timeBadge.innerText = slotTime;
+          slotRow.appendChild(timeBadge);
+
+          const contentArea = document.createElement('div');
+          contentArea.className = 'flex-1 min-w-0 space-y-1.5';
+
+          if (startingApps.length > 0) {
+            startingApps.forEach(app => {
+              contentArea.appendChild(this.createAppointmentCard(app));
+            });
+          } else if (coveringApps.length > 0) {
+            const ongoingIndicator = document.createElement('div');
+            ongoingIndicator.className = 'py-1.5 px-2.5 rounded-xl bg-zinc-900/40 border border-dashed border-zinc-800 text-[10px] text-zinc-400 flex items-center gap-1.5 truncate';
+            ongoingIndicator.innerHTML = `
+              <i data-lucide="corner-down-right" class="w-3 h-3 text-amber-500 shrink-0"></i>
+              <span class="truncate">"${UI.escapeHtml(coveringApps[0].customerName)}" sürüyor (${coveringApps[0].startTime}-${coveringApps[0].endTime})</span>
+            `;
+            contentArea.appendChild(ongoingIndicator);
+          } else {
+            const emptyCard = document.createElement('div');
+            emptyCard.onclick = () => UI.openManualModalWithSlot(this.state.currentDate, slotTime);
+            emptyCard.className = 'group py-2 px-2.5 rounded-xl border border-zinc-900 bg-surface-card/40 hover:bg-surface-card hover:border-amber-500/30 flex items-center justify-between text-xs text-zinc-400 cursor-pointer transition-all shadow-sm';
+            emptyCard.innerHTML = `
+              <div class="flex items-center gap-1.5 min-w-0 truncate">
+                <span class="w-1.5 h-1.5 rounded-full bg-zinc-700 group-hover:bg-amber-400 transition-colors shrink-0"></span>
+                <span class="text-zinc-400 group-hover:text-zinc-200 font-medium text-[11px] truncate">Müsait Randevu Saati</span>
+              </div>
+              <span class="text-[10px] text-zinc-400 group-hover:text-amber-400 font-bold flex items-center gap-1 transition-colors shrink-0">
+                <i data-lucide="plus" class="w-3 h-3"></i> Randevu Yaz
+              </span>
+            `;
+            contentArea.appendChild(emptyCard);
+          }
+
+          slotRow.appendChild(contentArea);
+          container.appendChild(slotRow);
+
+          currentSlotMins += 30;
+        }
+
+        lucide.createIcons();
+      },
+
+      createAppointmentCard(app) {
+        const card = document.createElement('div');
+        const isCancelled = app.status === 'cancelled';
+        const isCompleted = app.status === 'completed';
+        const isNoShow = app.status === 'no_show';
+
+        let borderClass = 'border-l-[3px] border-l-amber-500 border-zinc-800/80 bg-surface-card';
+        let statusBadge = '<span class="px-1.5 py-0.2 rounded text-[9px] font-bold bg-amber-500/10 text-amber-400 border border-amber-500/20 shrink-0">Planlandı</span>';
+
+        if (isCompleted) {
+          borderClass = 'border-l-[3px] border-l-emerald-500 border-zinc-800/80 bg-surface-card';
+          statusBadge = '<span class="px-1.5 py-0.2 rounded text-[9px] font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 flex items-center gap-0.5 shrink-0"><i data-lucide="check" class="w-2.5 h-2.5"></i> Tamamlandı</span>';
+        } else if (isCancelled) {
+          borderClass = 'border-l-[3px] border-l-rose-500 border-zinc-800/80 bg-surface-card/60 opacity-70';
+          statusBadge = '<span class="px-1.5 py-0.2 rounded text-[9px] font-bold bg-rose-500/10 text-rose-400 border border-rose-500/20 shrink-0">İptal</span>';
+        } else if (isNoShow) {
+          borderClass = 'border-l-[3px] border-l-zinc-600 border-zinc-800/80 bg-surface-card/60 opacity-70';
+          statusBadge = '<span class="px-1.5 py-0.2 rounded text-[9px] font-bold bg-zinc-800 text-zinc-400 shrink-0">Gelmedi</span>';
+        }
+
+        const durationMins = DateUtils.timeToMinutes(app.endTime) - DateUtils.timeToMinutes(app.startTime);
+
+        card.className = `p-2.5 rounded-xl border ${borderClass} transition-all hover:border-zinc-700 space-y-1.5 shadow-sm min-w-0 w-full`;
+        card.id = `appointment-card-${app.id}`;
+
+        card.innerHTML = `
+          <div class="flex items-start justify-between gap-1.5 min-w-0">
+            <div class="min-w-0 flex-1">
+              <div class="flex flex-wrap items-center gap-1.5">
+                <h4 class="text-xs font-bold text-zinc-100 truncate max-w-[130px] sm:max-w-[180px] ${isCancelled ? 'line-through text-zinc-400' : ''}">
+                  ${UI.escapeHtml(app.customerName)}
+                </h4>
+                ${statusBadge}
+              </div>
+              <div class="flex flex-wrap items-center gap-1 mt-1 text-[10px] text-zinc-400">
+                <span class="font-bold text-amber-400 flex items-center gap-0.5 shrink-0">
+                  <i data-lucide="clock" class="w-3 h-3"></i>
+                  ${app.startTime} - ${app.endTime}
+                </span>
+                <span class="text-zinc-600">•</span>
+                <span class="px-1.5 py-0.2 rounded bg-zinc-800 text-zinc-200 font-medium truncate max-w-[90px]">${UI.escapeHtml(app.service || 'Hizmet')}</span>
+                <span class="text-zinc-500 shrink-0">(${durationMins} dk)</span>
+              </div>
+            </div>
+
+            <!-- Card Actions (Compact Touch) -->
+            <div class="flex items-center gap-0.5 shrink-0">
+              ${!isCompleted && !isCancelled ? `
+                <button onclick="App.toggleCompleteAppointment('${app.id}')" title="Tamamla" class="w-7 h-7 flex items-center justify-center text-zinc-400 hover:text-emerald-400 hover:bg-emerald-500/10 rounded-lg transition-colors">
+                  <i data-lucide="check-circle-2" class="w-3.5 h-3.5"></i>
+                </button>
+              ` : ''}
+              <button onclick="UI.openEditManualModal('${app.id}')" title="Düzenle" class="w-7 h-7 flex items-center justify-center text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800 rounded-lg transition-colors">
+                <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
+              </button>
+              <button onclick="UI.openDeleteModal('${app.id}', '${UI.escapeHtml(app.customerName)}', '${app.startTime}')" title="Sil" class="w-7 h-7 flex items-center justify-center text-zinc-400 hover:text-rose-400 hover:bg-rose-500/10 rounded-lg transition-colors">
+                <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- Phone WhatsApp & Notes (Wrapped Cleanly) -->
+          ${app.phone || app.notes ? `
+            <div class="pt-1.5 border-t border-zinc-800/60 flex flex-wrap items-center justify-between gap-1 text-[11px] min-w-0">
+              ${app.phone ? `
+                <div class="flex items-center gap-1.5 shrink-0">
+                  <a href="tel:${UI.escapeHtml(app.phone)}" class="text-zinc-300 hover:text-amber-400 flex items-center gap-1 font-medium text-[10px]">
+                    <i data-lucide="phone" class="w-3 h-3 text-zinc-500"></i>
+                    ${UI.escapeHtml(app.phone)}
+                  </a>
+                  <a href="https://wa.me/${app.phone.replace(/[^0-9]/g, '')}" target="_blank" class="px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-400 text-[9px] font-bold flex items-center gap-0.5 hover:bg-emerald-500/25" title="WhatsApp">
+                    <i data-lucide="message-circle" class="w-2.5 h-2.5"></i> WA
+                  </a>
+                </div>
+              ` : '<span></span>'}
+              ${app.notes ? `
+                <div class="text-[10px] text-zinc-400 italic truncate max-w-full" title="${UI.escapeHtml(app.notes)}">
+                  "${UI.escapeHtml(app.notes)}"
+                </div>
+              ` : ''}
+            </div>
+          ` : ''}
+        `;
+
+        return card;
+      },
+
+      renderSummary() {
+        const appointments = StorageManager.getAppointments();
+        const settings = StorageManager.getSettings();
+        const date = this.state.currentDate;
+
+        document.getElementById('summaryDateLabel').innerText = DateUtils.formatTurkishFull(date);
+
+        const dayApps = appointments.filter(a => a.date === date);
+
+        const total = dayApps.length;
+        const planned = dayApps.filter(a => a.status === 'planned').length;
+        const completed = dayApps.filter(a => a.status === 'completed').length;
+        const cancelled = dayApps.filter(a => a.status === 'cancelled').length;
+        const noShow = dayApps.filter(a => a.status === 'no_show').length;
+
+        document.getElementById('statTotal').innerText = total;
+        document.getElementById('statPlanned').innerText = planned;
+        document.getElementById('statCompleted').innerText = completed;
+        document.getElementById('statCancelledNoShow').innerText = cancelled + noShow;
+        document.getElementById('statCancelledSubtext').innerText = `${cancelled} İptal, ${noShow} Gelmedi`;
+
+        const compRate = total > 0 ? Math.round((completed / total) * 100) : 0;
+        document.getElementById('statCompletedRate').innerText = `%${compRate} tamamlanma`;
+
+        const activeOrCompleted = dayApps.filter(a => a.status === 'planned' || a.status === 'completed');
+        
+        let bookedMins = 0;
+        const serviceCounts = {};
+
+        activeOrCompleted.forEach(a => {
+          const d = Math.max(0, DateUtils.timeToMinutes(a.endTime) - DateUtils.timeToMinutes(a.startTime));
+          bookedMins += d;
+          const s = a.service || 'Diğer';
+          serviceCounts[s] = (serviceCounts[s] || 0) + 1;
+        });
+
+        const workStartMins = DateUtils.timeToMinutes(settings.workStart || '09:00');
+        const workEndMins = DateUtils.timeToMinutes(settings.workEnd || '21:00');
+        const totalWorkCapacity = Math.max(0, workEndMins - workStartMins);
+        const freeMins = Math.max(0, totalWorkCapacity - bookedMins);
+
+        const bookedHours = (bookedMins / 60).toFixed(1);
+        const freeHours = (freeMins / 60).toFixed(1);
+
+        document.getElementById('statBookedMinutes').innerText = `${bookedHours} sa (${bookedMins} dk)`;
+        document.getElementById('statFreeMinutes').innerText = `${freeHours} sa (${freeMins} dk)`;
+        document.getElementById('statWorkingHoursRange').innerText = `${settings.workStart} - ${settings.workEnd}`;
+
+        const occupancyPct = totalWorkCapacity > 0 ? Math.min(100, Math.round((bookedMins / totalWorkCapacity) * 100)) : 0;
+        document.getElementById('statOccupancyRate').innerText = `%${occupancyPct}`;
+        document.getElementById('statProgressBar').style.width = `${occupancyPct}%`;
+
+        const servicesContainer = document.getElementById('summaryServicesList');
+        servicesContainer.innerHTML = '';
+
+        const serviceKeys = Object.keys(serviceCounts);
+        if (serviceKeys.length === 0) {
+          servicesContainer.innerHTML = '<div class="py-2.5 text-center text-zinc-400 text-xs">Henüz hizmet verisi yok.</div>';
+        } else {
+          serviceKeys.forEach(s => {
+            const count = serviceCounts[s];
+            const row = document.createElement('div');
+            row.className = 'py-2 flex justify-between items-center';
+            row.innerHTML = `
+              <span class="text-zinc-200 font-semibold text-xs">${UI.escapeHtml(s)}</span>
+              <span class="px-2 py-0.5 rounded bg-surface-card border border-surface-border text-amber-400 font-bold text-[10px]">${count} randevu</span>
+            `;
+            servicesContainer.appendChild(row);
+          });
+        }
+
+        lucide.createIcons();
+      },
+
+      saveAppointment(appointmentData) {
+        const appointments = StorageManager.getAppointments();
+        const conflict = ConflictEngine.checkConflict(appointmentData, appointmentData.id);
+
+        if (conflict.hasConflict) {
+          UI.showToast(conflict.message, 'warning');
+          return false;
+        }
+
+        if (appointmentData.id) {
+          const index = appointments.findIndex(a => a.id === appointmentData.id);
+          if (index !== -1) {
+            appointments[index] = {
+              ...appointments[index],
+              ...appointmentData,
+              updatedAt: new Date().toISOString()
+            };
+          }
+        } else {
+          const newApp = {
+            ...appointmentData,
+            id: 'rt_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5),
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString()
+          };
+          appointments.push(newApp);
+        }
+
+        const ok = StorageManager.saveAppointments(appointments);
+        if (ok) {
+          this.state.currentDate = appointmentData.date;
+          this.updateDateDisplay();
+          this.renderDayStrip();
+          this.renderCurrentView();
+          UI.showToast(appointmentData.id ? 'Randevu güncellendi.' : 'Yeni randevu eklendi.', 'success');
+          return true;
+        }
+        return false;
+      },
+
+      toggleCompleteAppointment(id) {
+        const appointments = StorageManager.getAppointments();
+        const app = appointments.find(a => a.id === id);
+        if (!app) return;
+
+        app.status = 'completed';
+        app.updatedAt = new Date().toISOString();
+        if (StorageManager.saveAppointments(appointments)) {
+          this.renderCurrentView();
+          UI.showToast(`"${app.customerName}" tamamlandı.`, 'success');
+        }
+      },
+
+      deleteAppointment(id) {
+        let appointments = StorageManager.getAppointments();
+        appointments = appointments.filter(a => a.id !== id);
+        if (StorageManager.saveAppointments(appointments)) {
+          this.renderCurrentView();
+          UI.showToast('Randevu kaydı silindi.', 'info');
+        }
+      },
+
+      onManualFormSubmit(event) {
+        event.preventDefault();
+        const btn = document.getElementById('btnManualSubmit');
+        btn.disabled = true;
+
+        const id = document.getElementById('mfEditId').value.trim() || null;
+        const candidate = {
+          id,
+          customerName: document.getElementById('mfCustomerName').value.trim(),
+          date: document.getElementById('mfDate').value,
+          startTime: document.getElementById('mfStartTime').value,
+          endTime: document.getElementById('mfEndTime').value,
+          service: document.getElementById('mfService').value,
+          phone: document.getElementById('mfPhone').value.trim(),
+          status: document.getElementById('mfStatus').value,
+          notes: document.getElementById('mfNotes').value.trim()
+        };
+
+        const success = this.saveAppointment(candidate);
+        btn.disabled = false;
+        if (success) {
+          UI.closeManualModal();
+        }
+      },
+
+      onVoiceConfirmSubmit(event) {
+        event.preventDefault();
+        const btn = document.getElementById('btnVoiceConfirmSubmit');
+        btn.disabled = true;
+
+        const candidate = {
+          id: null,
+          customerName: document.getElementById('vcCustomerName').value.trim(),
+          date: document.getElementById('vcDate').value,
+          startTime: document.getElementById('vcStartTime').value,
+          endTime: document.getElementById('vcEndTime').value,
+          service: document.getElementById('vcService').value,
+          phone: document.getElementById('vcPhone').value.trim(),
+          status: 'planned',
+          notes: document.getElementById('vcNotes').value.trim()
+        };
+
+        const success = this.saveAppointment(candidate);
+        btn.disabled = false;
+        if (success) {
+          UI.closeVoiceConfirmModal();
+        }
+      },
+
+      checkManualModalConflict() {
+        const id = document.getElementById('mfEditId').value.trim() || null;
+        const date = document.getElementById('mfDate').value;
+        const startTime = document.getElementById('mfStartTime').value;
+        const endTime = document.getElementById('mfEndTime').value;
+
+        const alertBox = document.getElementById('manualConflictAlert');
+        const alertMsg = document.getElementById('manualConflictMessage');
+
+        if (!date || !startTime || !endTime) {
+          alertBox.classList.add('hidden');
+          return;
+        }
+
+        const conflict = ConflictEngine.checkConflict({ date, startTime, endTime }, id);
+        if (conflict.hasConflict) {
+          alertBox.classList.remove('hidden');
+          alertMsg.innerText = conflict.message;
+        } else {
+          alertBox.classList.add('hidden');
+        }
+
+        const settings = StorageManager.getSettings();
+        const hoursAlert = document.getElementById('manualHoursAlert');
+        const candStartM = DateUtils.timeToMinutes(startTime);
+        const candEndM = DateUtils.timeToMinutes(endTime);
+        const wStartM = DateUtils.timeToMinutes(settings.workStart);
+        const wEndM = DateUtils.timeToMinutes(settings.workEnd);
+
+        if (candStartM < wStartM || candEndM > wEndM) {
+          hoursAlert.classList.remove('hidden');
+        } else {
+          hoursAlert.classList.add('hidden');
+        }
+      },
+
+      checkVoiceModalConflict() {
+        const date = document.getElementById('vcDate').value;
+        const startTime = document.getElementById('vcStartTime').value;
+        const endTime = document.getElementById('vcEndTime').value;
+
+        const alertBox = document.getElementById('voiceConfirmConflictAlert');
+        const alertMsg = document.getElementById('voiceConfirmConflictMessage');
+
+        if (!date || !startTime || !endTime) {
+          alertBox.classList.add('hidden');
+          return;
+        }
+
+        const conflict = ConflictEngine.checkConflict({ date, startTime, endTime });
+        if (conflict.hasConflict) {
+          alertBox.classList.remove('hidden');
+          alertMsg.innerText = conflict.message;
+        } else {
+          alertBox.classList.add('hidden');
+        }
+      },
+
+      onManualServiceChange() {
+        const service = document.getElementById('mfService').value;
+        const meta = APP_CONFIG.SERVICES_META[service];
+        const duration = meta ? meta.duration : 30;
+        document.getElementById('mfDuration').value = duration;
+        this.onManualDurationChange();
+      },
+
+      onManualTimeChange() {
+        const startTime = document.getElementById('mfStartTime').value;
+        const duration = parseInt(document.getElementById('mfDuration').value, 10) || 30;
+        if (startTime) {
+          document.getElementById('mfEndTime').value = DateUtils.addMinutesToTime(startTime, duration);
+        }
+        this.checkManualModalConflict();
+      },
+
+      onManualDurationChange() {
+        const startTime = document.getElementById('mfStartTime').value;
+        const duration = parseInt(document.getElementById('mfDuration').value, 10) || 30;
+        if (startTime) {
+          document.getElementById('mfEndTime').value = DateUtils.addMinutesToTime(startTime, duration);
+        }
+        this.checkManualModalConflict();
+      },
+
+      onVoiceServiceChange() {
+        const service = document.getElementById('vcService').value;
+        const meta = APP_CONFIG.SERVICES_META[service];
+        const duration = meta ? meta.duration : 30;
+        document.getElementById('vcDuration').value = duration;
+        this.onVoiceDurationChange();
+      },
+
+      onVoiceTimeChange() {
+        const startTime = document.getElementById('vcStartTime').value;
+        const duration = parseInt(document.getElementById('vcDuration').value, 10) || 30;
+        if (startTime) {
+          document.getElementById('vcEndTime').value = DateUtils.addMinutesToTime(startTime, duration);
+        }
+        this.checkVoiceModalConflict();
+      },
+
+      onVoiceDurationChange() {
+        const startTime = document.getElementById('vcStartTime').value;
+        const duration = parseInt(document.getElementById('vcDuration').value, 10) || 30;
+        if (startTime) {
+          document.getElementById('vcEndTime').value = DateUtils.addMinutesToTime(startTime, duration);
+        }
+        this.checkVoiceModalConflict();
+      },
+
+      onSaveSettingsSubmit(e) {
+        e.preventDefault();
+        const settings = {
+          businessName: document.getElementById('setBusinessName').value.trim() || 'Ramazan Toz',
+          workStart: document.getElementById('setWorkStart').value,
+          workEnd: document.getElementById('setWorkEnd').value,
+          defaultDuration: parseInt(document.getElementById('setDefaultDuration').value, 10) || 30
+        };
+
+        if (StorageManager.saveSettings(settings)) {
+          document.getElementById('headerBusinessName').innerText = settings.businessName;
+          UI.closeSettingsModal();
+          this.renderCurrentView();
+          UI.showToast('Ayarlar başarıyla kaydedildi.', 'success');
+        }
+      },
+
+      exportData() {
+        const data = {
+          version: '1.2',
+          exportedAt: new Date().toISOString(),
+          settings: StorageManager.getSettings(),
+          appointments: StorageManager.getAppointments()
+        };
+        const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `ramazan-toz-yedek-${DateUtils.toISODateString(new Date())}.json`;
+        a.click();
+        URL.revokeObjectURL(url);
+        UI.showToast('Veri yedeği indirildi.', 'success');
+      },
+
+      importData(event) {
+        const file = event.target.files && event.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          try {
+            const data = JSON.parse(e.target.result);
+            if (data.appointments && Array.isArray(data.appointments)) {
+              StorageManager.saveAppointments(data.appointments);
+              if (data.settings) StorageManager.saveSettings(data.settings);
+              this.init();
+              UI.showToast('Yedek başarıyla geri yüklendi.', 'success');
+              UI.closeSettingsModal();
+            } else {
+              UI.showToast('Geçersiz yedek dosyası.', 'error');
+            }
+          } catch (err) {
+            UI.showToast('JSON ayrıştırma hatası.', 'error');
+          }
+        };
+        reader.readAsText(file);
+      },
+
+      loadDemoSeedData() {
+        const todayIso = DateUtils.toISODateString(new Date());
+        const demo = [
+          {
+            id: 'rt_demo_1',
+            customerName: 'Mert Çarlı',
+            date: todayIso,
+            startTime: '10:00',
+            endTime: '10:45',
+            service: 'Saç ve sakal',
+            phone: '05321112233',
+            notes: 'Özel saç kesimi ve sakal düzeltme',
+            status: 'completed',
+            createdAt: new Date().toISOString()
+          },
+          {
+            id: 'rt_demo_2',
+            customerName: 'Ahmet Yılmaz',
+            date: todayIso,
+            startTime: '11:00',
+            endTime: '11:30',
+            service: 'Saç kesimi',
+            phone: '05445556677',
+            notes: 'Müşteri randevusu saatinde geldi',
+            status: 'planned',
+            createdAt: new Date().toISOString()
+          },
+          {
+            id: 'rt_demo_3',
+            customerName: 'Can Öztürk',
+            date: todayIso,
+            startTime: '14:30',
+            endTime: '14:50',
+            service: 'Sakal tıraşı',
+            phone: '05059998877',
+            notes: 'Sıcak havlu sakal bakımı',
+            status: 'planned',
+            createdAt: new Date().toISOString()
+          },
+          {
+            id: 'rt_demo_4',
+            customerName: 'Hasan Demir',
+            date: todayIso,
+            startTime: '16:00',
+            endTime: '16:30',
+            service: 'Saç kesimi',
+            phone: '05334445566',
+            notes: 'Sesli asistan ile kaydedildi',
+            status: 'planned',
+            createdAt: new Date().toISOString()
+          }
+        ];
+
+        StorageManager.saveAppointments(demo);
+        this.renderCurrentView();
+        UI.closeSettingsModal();
+        UI.showToast('Örnek veriler başarıyla yüklendi.', 'success');
+      },
+
+      resetAllData() {
+        if (confirm('Tüm randevuları ve ayarları sıfırlamak istediğinize emin misiniz?')) {
+          localStorage.removeItem(APP_CONFIG.STORAGE_APPOINTMENTS_KEY);
+          localStorage.removeItem(APP_CONFIG.STORAGE_SETTINGS_KEY);
+          this.init();
+          UI.closeSettingsModal();
+          UI.showToast('Tüm veriler sıfırlandı.', 'info');
+        }
+      }
+    };
+
+    const UI = {
+      escapeHtml(str) {
+        if (!str) return '';
+        return String(str)
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;')
+          .replace(/'/g, '&#39;');
+      },
+
+      selectQuickService(serviceName, duration) {
+        document.getElementById('mfService').value = serviceName;
+        document.getElementById('mfDuration').value = duration;
+        App.onManualDurationChange();
+      },
+
+      switchTab(tab) {
+        App.state.currentTab = tab;
+        const timelineView = document.getElementById('viewTimeline');
+        const summaryView = document.getElementById('viewSummary');
+        const navTimeline = document.getElementById('navBtnTimeline');
+        const navSummary = document.getElementById('navBtnSummary');
+
+        if (tab === 'timeline') {
+          timelineView.classList.remove('hidden');
+          summaryView.classList.add('hidden');
+          navTimeline.className = 'flex flex-col items-center gap-1 text-amber-400 transition-all w-16 group';
+          navSummary.className = 'flex flex-col items-center gap-1 text-zinc-400 hover:text-zinc-200 transition-all w-16 group';
+          App.renderTimeline();
+        } else {
+          timelineView.classList.add('hidden');
+          summaryView.classList.remove('hidden');
+          navSummary.className = 'flex flex-col items-center gap-1 text-amber-400 transition-all w-16 group';
+          navTimeline.className = 'flex flex-col items-center gap-1 text-zinc-400 hover:text-zinc-200 transition-all w-16 group';
+          App.renderSummary();
+        }
+      },
+
+      setVoiceListeningState(isListening) {
+        const overlay = document.getElementById('voiceOverlay');
+        const aura = document.getElementById('micAura');
+        const btn = document.getElementById('mainMicButton');
+        const label = document.getElementById('micButtonLabel');
+
+        if (isListening) {
+          overlay.classList.remove('hidden');
+          aura.classList.remove('hidden');
+          btn.classList.add('bg-rose-500', 'text-white');
+          label.innerText = 'Dinleniyor';
+          label.className = 'text-[9px] font-extrabold text-rose-400 mt-0.5 uppercase tracking-wider animate-pulse';
+        } else {
+          overlay.classList.add('hidden');
+          aura.classList.add('hidden');
+          btn.classList.remove('bg-rose-500', 'text-white');
+          label.innerText = 'Sesle Ekle';
+          label.className = 'text-[9px] font-extrabold text-amber-400 mt-0.5 uppercase tracking-wider';
+        }
+        lucide.createIcons();
+      },
+
+      openVoiceConfirmModal(parsed) {
+        document.getElementById('voiceConfirmRawText').innerText = `"${parsed.rawText}"`;
+        document.getElementById('vcCustomerName').value = parsed.customerName || '';
+        document.getElementById('vcDate').value = parsed.date || App.state.currentDate;
+        document.getElementById('vcStartTime').value = parsed.startTime || '';
+        document.getElementById('vcEndTime').value = parsed.endTime || '';
+        document.getElementById('vcService').value = parsed.service || 'Saç kesimi';
+        document.getElementById('vcDuration').value = parsed.durationMinutes || 30;
+        document.getElementById('vcPhone').value = parsed.phone || '';
+        document.getElementById('vcNotes').value = parsed.notes || '';
+
+        const alertsContainer = document.getElementById('voiceConfirmAlerts');
+        alertsContainer.innerHTML = '';
+
+        const confBadge = document.createElement('div');
+        if (parsed.confidence === 'high') {
+          confBadge.className = 'inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20';
+          confBadge.innerHTML = '<i data-lucide="check" class="w-3 h-3"></i> Yüksek Güvenilirlik';
+        } else if (parsed.confidence === 'medium') {
+          confBadge.className = 'inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/10 text-amber-400 border border-amber-500/20';
+          confBadge.innerHTML = '<i data-lucide="help-circle" class="w-3 h-3"></i> Kontrol Edilmesi Önerilir';
+        } else {
+          confBadge.className = 'inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-rose-500/10 text-rose-400 border border-rose-500/20';
+          confBadge.innerHTML = '<i data-lucide="alert-circle" class="w-3 h-3"></i> Eksik Bilgi Var';
+        }
+        alertsContainer.appendChild(confBadge);
+
+        if (parsed.warnings && parsed.warnings.length > 0) {
+          const warnBox = document.createElement('div');
+          warnBox.className = 'bg-amber-950/30 border border-amber-800/60 rounded-xl p-2 text-xs text-amber-300 space-y-0.5';
+          warnBox.innerHTML = `
+            <div class="font-bold flex items-center gap-1 text-[11px]"><i data-lucide="alert-triangle" class="w-3 h-3"></i> Uyarılar:</div>
+            <ul class="list-disc list-inside space-y-0.5 text-[10px]">
+              ${parsed.warnings.map(w => `<li>${UI.escapeHtml(w)}</li>`).join('')}
+            </ul>
+          `;
+          alertsContainer.appendChild(warnBox);
+        }
+
+        App.checkVoiceModalConflict();
+        document.getElementById('voiceConfirmModal').classList.remove('hidden');
+        lucide.createIcons();
+      },
+
+      closeVoiceConfirmModal() {
+        document.getElementById('voiceConfirmModal').classList.add('hidden');
+      },
+
+      openManualModal() {
+        document.getElementById('manualModalTitle').innerText = 'Yeni Randevu Oluştur';
+        document.getElementById('mfEditId').value = '';
+        document.getElementById('mfCustomerName').value = '';
+        document.getElementById('mfDate').value = App.state.currentDate;
+        
+        const settings = StorageManager.getSettings();
+        document.getElementById('mfStartTime').value = '10:00';
+        document.getElementById('mfDuration').value = settings.defaultDuration || 30;
+        document.getElementById('mfEndTime').value = DateUtils.addMinutesToTime('10:00', settings.defaultDuration || 30);
+        document.getElementById('mfService').value = 'Saç kesimi';
+        document.getElementById('mfPhone').value = '';
+        document.getElementById('mfStatus').value = 'planned';
+        document.getElementById('mfNotes').value = '';
+
+        App.checkManualModalConflict();
+        document.getElementById('manualModal').classList.remove('hidden');
+        document.getElementById('mfCustomerName').focus();
+        lucide.createIcons();
+      },
+
+      openManualModalWithSlot(date, startTime) {
+        this.openManualModal();
+        document.getElementById('mfDate').value = date;
+        document.getElementById('mfStartTime').value = startTime;
+        const duration = parseInt(document.getElementById('mfDuration').value, 10) || 30;
+        document.getElementById('mfEndTime').value = DateUtils.addMinutesToTime(startTime, duration);
+        App.checkManualModalConflict();
+      },
+
+      openEditManualModal(id) {
+        const appointments = StorageManager.getAppointments();
+        const app = appointments.find(a => a.id === id);
+        if (!app) return;
+
+        document.getElementById('manualModalTitle').innerText = 'Randevuyu Düzenle';
+        document.getElementById('mfEditId').value = app.id;
+        document.getElementById('mfCustomerName').value = app.customerName;
+        document.getElementById('mfDate').value = app.date;
+        document.getElementById('mfStartTime').value = app.startTime;
+        document.getElementById('mfEndTime').value = app.endTime;
+        document.getElementById('mfService').value = app.service || 'Saç kesimi';
+
+        const dur = DateUtils.timeToMinutes(app.endTime) - DateUtils.timeToMinutes(app.startTime);
+        document.getElementById('mfDuration').value = dur > 0 ? dur : 30;
+
+        document.getElementById('mfPhone').value = app.phone || '';
+        document.getElementById('mfStatus').value = app.status || 'planned';
+        document.getElementById('mfNotes').value = app.notes || '';
+
+        App.checkManualModalConflict();
+        document.getElementById('manualModal').classList.remove('hidden');
+        lucide.createIcons();
+      },
+
+      closeManualModal() {
+        document.getElementById('manualModal').classList.add('hidden');
+      },
+
+      openSettingsModal() {
+        const s = StorageManager.getSettings();
+        document.getElementById('setBusinessName').value = s.businessName || 'Ramazan Toz';
+        document.getElementById('setWorkStart').value = s.workStart;
+        document.getElementById('setWorkEnd').value = s.workEnd;
+        document.getElementById('setDefaultDuration').value = s.defaultDuration;
+        document.getElementById('settingsModal').classList.remove('hidden');
+        lucide.createIcons();
+      },
+
+      closeSettingsModal() {
+        document.getElementById('settingsModal').classList.add('hidden');
+      },
+
+      openDeleteModal(id, customerName, time) {
+        App.state.pendingDeleteId = id;
+        document.getElementById('deleteConfirmText').innerHTML = `
+          <strong>${customerName}</strong> (${time}) randevusu silinecektir.
+        `;
+        const btn = document.getElementById('btnConfirmDeleteAction');
+        btn.onclick = () => {
+          App.deleteAppointment(id);
+          UI.closeDeleteModal();
+        };
+        document.getElementById('deleteConfirmModal').classList.remove('hidden');
+        lucide.createIcons();
+      },
+
+      closeDeleteModal() {
+        App.state.pendingDeleteId = null;
+        document.getElementById('deleteConfirmModal').classList.add('hidden');
+      },
+
+      closeAllModals() {
+        this.closeVoiceConfirmModal();
+        this.closeManualModal();
+        this.closeSettingsModal();
+        this.closeDeleteModal();
+        VoiceRecognitionManager.cancel();
+      },
+
+      showToast(message, type = 'info') {
+        const container = document.getElementById('toastContainer');
+        const toast = document.createElement('div');
+
+        let bg = 'bg-surface-card border-surface-border text-zinc-100';
+        let icon = 'info';
+
+        if (type === 'success') {
+          bg = 'bg-emerald-950/90 border-emerald-800 text-emerald-200';
+          icon = 'check-circle';
+        } else if (type === 'warning') {
+          bg = 'bg-amber-950/90 border-amber-800 text-amber-200';
+          icon = 'alert-triangle';
+        } else if (type === 'error') {
+          bg = 'bg-rose-950/90 border-rose-800 text-rose-200';
+          icon = 'x-circle';
+        }
+
+        toast.className = `flex items-center gap-2 px-3 py-2 rounded-xl border ${bg} shadow-2xl text-[11px] font-semibold animate-slide-up transition-opacity duration-300 pointer-events-auto`;
+        toast.innerHTML = `<i data-lucide="${icon}" class="w-3.5 h-3.5 shrink-0"></i> <span>${UI.escapeHtml(message)}</span>`;
+
+        container.appendChild(toast);
+        lucide.createIcons();
+
+        setTimeout(() => {
+          toast.style.opacity = '0';
+          setTimeout(() => {
+            if (toast.parentNode) toast.parentNode.removeChild(toast);
+          }, 300);
+        }, 3000);
+      }
+    };
+
+    document.addEventListener('DOMContentLoaded', () => {
+      App.init();
+      // PWA Service Worker Registration
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('./sw.js').catch((err) => {
+          console.log('PWA ServiceWorker notice:', err);
+        });
+      }
+    });
+  </script>
+</body>
+</html>
