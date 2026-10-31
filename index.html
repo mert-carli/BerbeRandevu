@@ -286,6 +286,35 @@
         padding-top: calc(max(28px, env(safe-area-inset-top, 28px)) + 12px) !important;
       }
     }
+
+    /* Mobil Tarih ve Saat Seçici Responsive Düzenleme */
+    input[type="date"],
+    input[type="time"] {
+      width: 100% !important;
+      max-width: 100% !important;
+      min-width: 0 !important;
+      box-sizing: border-box !important;
+      display: block !important;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      appearance: none;
+      min-height: 42px;
+    }
+    input[type="date"]::-webkit-date-and-time-value,
+    input[type="time"]::-webkit-date-and-time-value {
+      text-align: left;
+      padding: 0;
+      margin: 0;
+      min-height: 1.25rem;
+    }
+    input[type="date"]::-webkit-calendar-picker-indicator,
+    input[type="time"]::-webkit-calendar-picker-indicator {
+      cursor: pointer;
+      opacity: 0.8;
+      filter: invert(0.85);
+      padding: 2px;
+      margin: 0;
+    }
   </style>
 </head>
 <body class="min-h-screen bg-[#08090c] text-zinc-100 antialiased selection:bg-amber-500 selection:text-zinc-950 pb-24 md:pb-12">
@@ -719,14 +748,14 @@
           <input type="text" id="vcCustomerName" required class="w-full min-w-0 bg-surface-input border border-surface-border rounded-xl px-3.5 py-2.5 text-zinc-100 text-sm focus:outline-none focus:border-amber-400 font-medium box-border">
         </div>
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-          <div class="min-w-0">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 min-w-0">
+          <div class="min-w-0 w-full overflow-hidden">
             <label class="block text-zinc-300 mb-1 font-semibold text-xs">Tarih <span class="text-amber-400">*</span></label>
-            <input type="date" id="vcDate" required onchange="App.checkVoiceModalConflict()" class="w-full min-w-0 bg-surface-input border border-surface-border rounded-xl px-3 py-2.5 text-zinc-100 text-xs focus:outline-none focus:border-amber-400 box-border">
+            <input type="date" id="vcDate" required onchange="App.checkVoiceModalConflict()" class="w-full min-w-0 max-w-full bg-surface-input border border-surface-border rounded-xl px-3 py-2.5 text-zinc-100 text-xs focus:outline-none focus:border-amber-400 box-border">
           </div>
-          <div class="min-w-0">
+          <div class="min-w-0 w-full">
             <label class="block text-zinc-300 mb-1 font-semibold text-xs">Hizmet Türü</label>
-            <select id="vcService" onchange="App.onVoiceServiceChange()" class="w-full min-w-0 bg-surface-input border border-surface-border rounded-xl px-3 py-2.5 text-zinc-100 text-xs focus:outline-none focus:border-amber-400 box-border">
+            <select id="vcService" onchange="App.onVoiceServiceChange()" class="w-full min-w-0 max-w-full bg-surface-input border border-surface-border rounded-xl px-3 py-2.5 text-zinc-100 text-xs focus:outline-none focus:border-amber-400 box-border">
               <option value="Saç kesimi">Saç kesimi</option>
               <option value="Sakal tıraşı">Sakal tıraşı</option>
               <option value="Saç ve sakal">Saç ve sakal</option>
@@ -737,16 +766,22 @@
           </div>
         </div>
 
-        <!-- 2-Column Time & Duration Block -->
-        <div class="p-3 rounded-2xl bg-zinc-900/60 border border-zinc-800/80 space-y-2.5 min-w-0">
-          <div class="grid grid-cols-2 gap-2.5 min-w-0">
-            <div class="min-w-0">
-              <label class="block text-zinc-300 mb-1 font-semibold text-xs">Başlangıç Saati <span class="text-amber-400">*</span></label>
-              <input type="time" id="vcStartTime" required onchange="App.onVoiceTimeChange()" class="w-full min-w-0 bg-surface-input border border-surface-border rounded-xl px-3 py-2 text-zinc-100 text-xs font-mono font-bold focus:outline-none focus:border-amber-400 box-border">
+        <!-- Time & Duration Block -->
+        <div class="p-3 rounded-2xl bg-zinc-900/60 border border-zinc-800/80 space-y-2.5 min-w-0 overflow-hidden">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 min-w-0">
+            <div class="min-w-0 w-full">
+              <label class="block text-zinc-300 mb-1 font-semibold text-xs flex items-center justify-between">
+                <span>Başlangıç Saati <span class="text-amber-400">*</span></span>
+                <span class="text-[10px] text-zinc-500 font-mono">09:00 - 21:00</span>
+              </label>
+              <input type="time" id="vcStartTime" required onchange="App.onVoiceTimeChange()" class="w-full min-w-0 max-w-full bg-surface-input border border-surface-border rounded-xl px-3 py-2.5 text-zinc-100 text-xs font-mono font-bold focus:outline-none focus:border-amber-400 box-border">
             </div>
-            <div class="min-w-0">
-              <label class="block text-zinc-300 mb-1 font-semibold text-xs">Bitiş Saati <span class="text-amber-400">*</span></label>
-              <input type="time" id="vcEndTime" required onchange="App.onVoiceEndTimeChange()" class="w-full min-w-0 bg-surface-input border border-surface-border rounded-xl px-3 py-2 text-zinc-100 text-xs font-mono font-bold focus:outline-none focus:border-amber-400 box-border">
+            <div class="min-w-0 w-full">
+              <label class="block text-zinc-300 mb-1 font-semibold text-xs flex items-center justify-between">
+                <span>Bitiş Saati <span class="text-amber-400">*</span></span>
+                <span class="text-[10px] text-amber-500/80 font-mono">Otomatik</span>
+              </label>
+              <input type="time" id="vcEndTime" required onchange="App.onVoiceEndTimeChange()" class="w-full min-w-0 max-w-full bg-surface-input border border-surface-border rounded-xl px-3 py-2.5 text-zinc-100 text-xs font-mono font-bold focus:outline-none focus:border-amber-400 box-border">
             </div>
           </div>
 
@@ -860,14 +895,14 @@
           </div>
         </div>
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-          <div class="min-w-0">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 min-w-0">
+          <div class="min-w-0 w-full overflow-hidden">
             <label class="block text-zinc-300 mb-1 font-semibold text-xs">Tarih <span class="text-amber-400">*</span></label>
-            <input type="date" id="mfDate" required onchange="App.checkManualModalConflict()" class="w-full min-w-0 bg-surface-input border border-surface-border rounded-xl px-3 py-2.5 text-zinc-100 text-xs focus:outline-none focus:border-amber-400 box-border">
+            <input type="date" id="mfDate" required onchange="App.checkManualModalConflict()" class="w-full min-w-0 max-w-full bg-surface-input border border-surface-border rounded-xl px-3 py-2.5 text-zinc-100 text-xs focus:outline-none focus:border-amber-400 box-border">
           </div>
-          <div class="min-w-0">
+          <div class="min-w-0 w-full">
             <label class="block text-zinc-300 mb-1 font-semibold text-xs">Hizmet Türü</label>
-            <select id="mfService" onchange="App.onManualServiceChange()" class="w-full min-w-0 bg-surface-input border border-surface-border rounded-xl px-3 py-2.5 text-zinc-100 text-xs focus:outline-none focus:border-amber-400 box-border">
+            <select id="mfService" onchange="App.onManualServiceChange()" class="w-full min-w-0 max-w-full bg-surface-input border border-surface-border rounded-xl px-3 py-2.5 text-zinc-100 text-xs focus:outline-none focus:border-amber-400 box-border">
               <option value="Saç kesimi">Saç kesimi</option>
               <option value="Sakal tıraşı">Sakal tıraşı</option>
               <option value="Saç ve sakal">Saç ve sakal</option>
@@ -878,16 +913,22 @@
           </div>
         </div>
 
-        <!-- 2-Column Time & Duration Block (No 3-column overflow) -->
-        <div class="p-3 rounded-2xl bg-zinc-900/60 border border-zinc-800/80 space-y-2.5 min-w-0">
-          <div class="grid grid-cols-2 gap-2.5 min-w-0">
-            <div class="min-w-0">
-              <label class="block text-zinc-300 mb-1 font-semibold text-xs">Başlangıç Saati <span class="text-amber-400">*</span></label>
-              <input type="time" id="mfStartTime" required onchange="App.onManualTimeChange()" class="w-full min-w-0 bg-surface-input border border-surface-border rounded-xl px-3 py-2 text-zinc-100 text-xs font-mono font-bold focus:outline-none focus:border-amber-400 box-border">
+        <!-- Time & Duration Block -->
+        <div class="p-3 rounded-2xl bg-zinc-900/60 border border-zinc-800/80 space-y-2.5 min-w-0 overflow-hidden">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 min-w-0">
+            <div class="min-w-0 w-full">
+              <label class="block text-zinc-300 mb-1 font-semibold text-xs flex items-center justify-between">
+                <span>Başlangıç Saati <span class="text-amber-400">*</span></span>
+                <span class="text-[10px] text-zinc-500 font-mono">09:00 - 21:00</span>
+              </label>
+              <input type="time" id="mfStartTime" required onchange="App.onManualTimeChange()" class="w-full min-w-0 max-w-full bg-surface-input border border-surface-border rounded-xl px-3 py-2.5 text-zinc-100 text-xs font-mono font-bold focus:outline-none focus:border-amber-400 box-border">
             </div>
-            <div class="min-w-0">
-              <label class="block text-zinc-300 mb-1 font-semibold text-xs">Bitiş Saati <span class="text-amber-400">*</span></label>
-              <input type="time" id="mfEndTime" required onchange="App.onManualEndTimeChange()" class="w-full min-w-0 bg-surface-input border border-surface-border rounded-xl px-3 py-2 text-zinc-100 text-xs font-mono font-bold focus:outline-none focus:border-amber-400 box-border">
+            <div class="min-w-0 w-full">
+              <label class="block text-zinc-300 mb-1 font-semibold text-xs flex items-center justify-between">
+                <span>Bitiş Saati <span class="text-amber-400">*</span></span>
+                <span class="text-[10px] text-amber-500/80 font-mono">Otomatik</span>
+              </label>
+              <input type="time" id="mfEndTime" required onchange="App.onManualEndTimeChange()" class="w-full min-w-0 max-w-full bg-surface-input border border-surface-border rounded-xl px-3 py-2.5 text-zinc-100 text-xs font-mono font-bold focus:outline-none focus:border-amber-400 box-border">
             </div>
           </div>
 
@@ -950,7 +991,7 @@
 
   <!-- MODAL 4: AYARLAR MODALI -->
   <div id="settingsModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-3 hidden overscroll-contain">
-    <div class="w-full max-w-md bg-[#0e1017] border-t sm:border border-zinc-800 rounded-t-3xl sm:rounded-2xl p-4 sm:p-5 max-h-[90vh] overflow-y-auto space-y-3.5 animate-slide-up sm:animate-none shadow-2xl" style="padding-bottom: max(1.25rem, env(safe-area-inset-bottom));">
+    <div class="w-full max-w-md bg-[#0e1017] border-t sm:border border-zinc-800 rounded-t-3xl sm:rounded-2xl p-4 sm:p-5 max-h-[90vh] overflow-y-auto overflow-x-hidden space-y-3.5 animate-slide-up sm:animate-none shadow-2xl" style="padding-bottom: max(1.25rem, env(safe-area-inset-bottom));">
       
       <div class="flex items-center justify-between pb-2 border-b border-zinc-800/80">
         <div class="flex items-center gap-2">
@@ -973,14 +1014,20 @@
           <input type="text" id="setBusinessName" required class="w-full min-w-0 bg-surface-input border border-surface-border rounded-xl px-3.5 py-2.5 text-zinc-100 focus:outline-none focus:border-amber-400 font-medium box-border text-xs">
         </div>
 
-        <div class="grid grid-cols-2 gap-2">
-          <div class="min-w-0">
-            <label class="block text-zinc-300 mb-1 font-semibold text-xs">Mesai Başlangıcı</label>
-            <input type="time" id="setWorkStart" required class="w-full min-w-0 bg-surface-input border border-surface-border rounded-xl px-2.5 py-2 text-zinc-100 font-mono font-bold focus:outline-none focus:border-amber-400 box-border text-xs">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 min-w-0">
+          <div class="min-w-0 w-full">
+            <label class="block text-zinc-300 mb-1 font-semibold text-xs flex items-center gap-1.5">
+              <i data-lucide="sun" class="w-3.5 h-3.5 text-amber-400"></i>
+              <span>Mesai Başlangıcı</span>
+            </label>
+            <input type="time" id="setWorkStart" required class="w-full min-w-0 max-w-full bg-surface-input border border-surface-border rounded-xl px-3 py-2.5 text-zinc-100 font-mono font-bold focus:outline-none focus:border-amber-400 box-border text-xs">
           </div>
-          <div class="min-w-0">
-            <label class="block text-zinc-300 mb-1 font-semibold text-xs">Mesai Bitişi</label>
-            <input type="time" id="setWorkEnd" required class="w-full min-w-0 bg-surface-input border border-surface-border rounded-xl px-2.5 py-2 text-zinc-100 font-mono font-bold focus:outline-none focus:border-amber-400 box-border text-xs">
+          <div class="min-w-0 w-full">
+            <label class="block text-zinc-300 mb-1 font-semibold text-xs flex items-center gap-1.5">
+              <i data-lucide="moon" class="w-3.5 h-3.5 text-amber-400"></i>
+              <span>Mesai Bitişi</span>
+            </label>
+            <input type="time" id="setWorkEnd" required class="w-full min-w-0 max-w-full bg-surface-input border border-surface-border rounded-xl px-3 py-2.5 text-zinc-100 font-mono font-bold focus:outline-none focus:border-amber-400 box-border text-xs">
           </div>
         </div>
 
