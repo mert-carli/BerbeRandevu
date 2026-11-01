@@ -1,5 +1,7 @@
 <div align="center">
 
+<img src="./icon.png" alt="Ramazan Toz Barber Studio Logo" width="180" style="border-radius: 18px; box-shadow: 0 8px 30px rgba(0,0,0,0.6); margin-bottom: 16px;" />
+
 # 💈 Ramazan Toz — Akıllı Berber Randevu ve Kasa Yönetimi PWA
 
 [![PWA Ready](https://img.shields.io/badge/PWA-Ready-10b981?style=for-the-badge&logo=pwa&logoColor=white)](https://web.dev/progressive-web-apps/)
