@@ -950,7 +950,7 @@
           </div>
         </div>
 
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
           <div class="min-w-0">
             <label class="block text-zinc-300 mb-1 font-semibold text-xs">Müşteri Telefonu</label>
             <input type="tel" id="mfPhone" placeholder="05XX XXX XX XX" class="w-full min-w-0 bg-surface-input border border-surface-border rounded-xl px-3 py-2.5 text-zinc-100 text-xs focus:outline-none focus:border-amber-400 box-border">
@@ -966,6 +966,14 @@
               <option value="completed">Tamamlandı</option>
               <option value="cancelled">İptal Edildi</option>
               <option value="no_show">Gelmedi</option>
+            </select>
+          </div>
+          <div class="min-w-0">
+            <label class="block text-zinc-300 mb-1 font-semibold text-xs">Ödeme Yöntemi</label>
+            <select id="mfPaymentMethod" class="w-full min-w-0 bg-surface-input border border-surface-border rounded-xl px-3 py-2.5 text-zinc-100 text-xs focus:outline-none focus:border-amber-400 box-border">
+              <option value="cash">💵 Nakit</option>
+              <option value="card">💳 Kredi Kartı</option>
+              <option value="transfer">📲 Havale / EFT</option>
             </select>
           </div>
         </div>
@@ -1181,15 +1189,15 @@
       <div class="space-y-1.5">
         <label class="block text-zinc-400 font-semibold text-[11px]">Ödeme Yöntemini Seçin:</label>
         <div class="grid grid-cols-3 gap-2">
-          <button type="button" onclick="App.confirmCompleteWithPayment('cash')" class="py-3 px-1.5 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 active:scale-95 border border-emerald-500/30 text-emerald-300 font-bold flex flex-col items-center justify-center gap-1.5 transition-all shadow-sm">
+          <button id="payBtn_cash" type="button" onclick="App.confirmCompleteWithPayment('cash')" class="py-3 px-1.5 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 active:scale-95 border border-emerald-500/30 text-emerald-300 font-bold flex flex-col items-center justify-center gap-1.5 transition-all shadow-sm">
             <span class="text-xl">💵</span>
             <span class="text-[11px]">Nakit</span>
           </button>
-          <button type="button" onclick="App.confirmCompleteWithPayment('card')" class="py-3 px-1.5 rounded-xl bg-cyan-500/10 hover:bg-cyan-500/20 active:scale-95 border border-cyan-500/30 text-cyan-300 font-bold flex flex-col items-center justify-center gap-1.5 transition-all shadow-sm">
+          <button id="payBtn_card" type="button" onclick="App.confirmCompleteWithPayment('card')" class="py-3 px-1.5 rounded-xl bg-cyan-500/10 hover:bg-cyan-500/20 active:scale-95 border border-cyan-500/30 text-cyan-300 font-bold flex flex-col items-center justify-center gap-1.5 transition-all shadow-sm">
             <span class="text-xl">💳</span>
             <span class="text-[11px]">Kredi Kartı</span>
           </button>
-          <button type="button" onclick="App.confirmCompleteWithPayment('transfer')" class="py-3 px-1.5 rounded-xl bg-purple-500/10 hover:bg-purple-500/20 active:scale-95 border border-purple-500/30 text-purple-300 font-bold flex flex-col items-center justify-center gap-1.5 transition-all shadow-sm">
+          <button id="payBtn_transfer" type="button" onclick="App.confirmCompleteWithPayment('transfer')" class="py-3 px-1.5 rounded-xl bg-purple-500/10 hover:bg-purple-500/20 active:scale-95 border border-purple-500/30 text-purple-300 font-bold flex flex-col items-center justify-center gap-1.5 transition-all shadow-sm">
             <span class="text-xl">📲</span>
             <span class="text-[11px]">Havale/EFT</span>
           </button>
@@ -2269,13 +2277,13 @@
                 ${appPrice} ₺
               </span>
               ${isCompleted && app.paymentMethod ? `
-                <span class="px-1.5 py-0.2 rounded text-[10px] font-bold flex items-center gap-1 ${
+                <button type="button" onclick="UI.openPaymentModal('${app.id}')" title="Ödeme türü veya tutarını güncelle" class="px-1.5 py-0.5 rounded text-[10px] font-bold flex items-center gap-1 cursor-pointer transition-transform hover:scale-105 active:scale-95 ${
                   app.paymentMethod === 'cash' ? 'bg-emerald-500/15 text-emerald-300 border border-emerald-500/20' :
                   app.paymentMethod === 'card' ? 'bg-cyan-500/15 text-cyan-300 border border-cyan-500/20' :
                   'bg-purple-500/15 text-purple-300 border border-purple-500/20'
                 }">
                   ${app.paymentMethod === 'cash' ? '💵 Nakit' : app.paymentMethod === 'card' ? '💳 Kart' : '📲 Havale'}
-                </span>
+                </button>
               ` : ''}
             </div>
           </div>
@@ -2377,7 +2385,10 @@
         let sumCash = 0, sumCard = 0, sumTransfer = 0;
         completedDayApps.forEach(a => {
           const p = getAppPrice(a);
-          const method = a.paymentMethod || 'cash';
+          const rawMethod = (a.paymentMethod || 'cash').toLowerCase();
+          const method = (rawMethod === 'card' || rawMethod === 'kart' || rawMethod === 'credit_card') ? 'card'
+            : (rawMethod === 'transfer' || rawMethod === 'havale' || rawMethod === 'eft') ? 'transfer'
+            : 'cash';
           if (method === 'cash') sumCash += p;
           else if (method === 'card') sumCard += p;
           else if (method === 'transfer') sumTransfer += p;
@@ -2389,16 +2400,45 @@
         const pctTransfer = totalPaySum > 0 ? Math.max(0, 100 - pctCash - pctCard) : 0;
 
         if (document.getElementById('statDailyRevenue')) document.getElementById('statDailyRevenue').innerText = `${dailyRevenue.toLocaleString('tr-TR')} ₺`;
+        if (document.getElementById('statDailyPaidCount')) document.getElementById('statDailyPaidCount').innerText = `${completedDayApps.length} işlem`;
         if (document.getElementById('statMonthlyRevenue')) document.getElementById('statMonthlyRevenue').innerText = `${monthlyRevenue.toLocaleString('tr-TR')} ₺`;
         if (document.getElementById('statAvgBasket')) document.getElementById('statAvgBasket').innerText = `${avgBasket.toLocaleString('tr-TR')} ₺`;
 
-        if (document.getElementById('statSumCash')) document.getElementById('statSumCash').innerText = `${sumCash.toLocaleString('tr-TR')} ₺`;
-        if (document.getElementById('statSumCard')) document.getElementById('statSumCard').innerText = `${sumCard.toLocaleString('tr-TR')} ₺`;
-        if (document.getElementById('statSumTransfer')) document.getElementById('statSumTransfer').innerText = `${sumTransfer.toLocaleString('tr-TR')} ₺`;
+        // Payment method amount badges (HTML element IDs: statCashAmount, statCardAmount, statTransferAmount)
+        const cashText = `${sumCash.toLocaleString('tr-TR')} ₺`;
+        const cardText = `${sumCard.toLocaleString('tr-TR')} ₺`;
+        const transferText = `${sumTransfer.toLocaleString('tr-TR')} ₺`;
+
+        if (document.getElementById('statCashAmount')) document.getElementById('statCashAmount').innerText = cashText;
+        if (document.getElementById('statCardAmount')) document.getElementById('statCardAmount').innerText = cardText;
+        if (document.getElementById('statTransferAmount')) document.getElementById('statTransferAmount').innerText = transferText;
+
+        // Also update statSum* fallback IDs if present
+        if (document.getElementById('statSumCash')) document.getElementById('statSumCash').innerText = cashText;
+        if (document.getElementById('statSumCard')) document.getElementById('statSumCard').innerText = cardText;
+        if (document.getElementById('statSumTransfer')) document.getElementById('statSumTransfer').innerText = transferText;
 
         if (document.getElementById('statBarCash')) document.getElementById('statBarCash').style.width = `${pctCash}%`;
         if (document.getElementById('statBarCard')) document.getElementById('statBarCard').style.width = `${pctCard}%`;
         if (document.getElementById('statBarTransfer')) document.getElementById('statBarTransfer').style.width = `${pctTransfer}%`;
+
+        if (document.getElementById('statPaymentBreakdownPercent')) {
+          if (totalPaySum > 0) {
+            document.getElementById('statPaymentBreakdownPercent').innerText = `%${pctCash} Nakit · %${pctCard} Kart · %${pctTransfer} Havale`;
+          } else {
+            document.getElementById('statPaymentBreakdownPercent').innerText = '0 işlem';
+          }
+        }
+
+        if (document.getElementById('statMonthlyMonthLabel')) {
+          try {
+            const dObj = new Date(date + 'T00:00:00');
+            const mName = dObj.toLocaleDateString('tr-TR', { month: 'long' });
+            document.getElementById('statMonthlyMonthLabel').innerText = mName ? `${mName} Ayı` : 'Bu Ay';
+          } catch (e) {
+            document.getElementById('statMonthlyMonthLabel').innerText = 'Bu Ay';
+          }
+        }
 
         // Service Types Distribution
         const servicesContainer = document.getElementById('summaryServicesList');
@@ -2528,6 +2568,7 @@
         btn.disabled = true;
 
         const id = document.getElementById('mfEditId').value.trim() || null;
+        const payMethodEl = document.getElementById('mfPaymentMethod');
         const candidate = {
           id,
           customerName: document.getElementById('mfCustomerName').value.trim(),
@@ -2538,8 +2579,12 @@
           price: parseFloat(document.getElementById('mfPrice').value) || 0,
           phone: document.getElementById('mfPhone').value.trim(),
           status: document.getElementById('mfStatus').value,
+          paymentMethod: payMethodEl ? payMethodEl.value : 'cash',
           notes: document.getElementById('mfNotes').value.trim()
         };
+        if (candidate.status === 'completed') {
+          candidate.completedAt = new Date().toISOString();
+        }
 
         const success = this.saveAppointment(candidate);
         btn.disabled = false;
@@ -3025,6 +3070,9 @@
         document.getElementById('mfPrice').value = defaultPrice;
         document.getElementById('mfPhone').value = '';
         document.getElementById('mfStatus').value = 'planned';
+        if (document.getElementById('mfPaymentMethod')) {
+          document.getElementById('mfPaymentMethod').value = 'cash';
+        }
         document.getElementById('mfNotes').value = '';
 
         App.checkManualModalConflict();
@@ -3067,6 +3115,9 @@
 
         document.getElementById('mfPhone').value = app.phone || '';
         document.getElementById('mfStatus').value = app.status || 'planned';
+        if (document.getElementById('mfPaymentMethod')) {
+          document.getElementById('mfPaymentMethod').value = app.paymentMethod || 'cash';
+        }
         document.getElementById('mfNotes').value = app.notes || '';
 
         App.checkManualModalConflict();
@@ -3095,6 +3146,18 @@
 
         const currentPrice = (typeof app.price === 'number' && app.price > 0) ? app.price : defaultPrice;
         document.getElementById('payAmountInput').value = currentPrice;
+
+        const activeMethod = app.paymentMethod || 'cash';
+        ['cash', 'card', 'transfer'].forEach(m => {
+          const btn = document.getElementById(`payBtn_${m}`);
+          if (btn) {
+            if (m === activeMethod) {
+              btn.classList.add('ring-2', 'ring-amber-400', 'border-amber-400');
+            } else {
+              btn.classList.remove('ring-2', 'ring-amber-400', 'border-amber-400');
+            }
+          }
+        });
 
         document.getElementById('paymentModal').classList.remove('hidden');
         lucide.createIcons();

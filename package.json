@@ -1,0 +1,26 @@
+{
+  "name": "ramazan-toz-berberandevu",
+  "version": "1.1.0",
+  "description": "Mobil öncelikli, sesli Türkçe asistanlı, çakışma önleyici ve offline (PWA) destekli berber randevu yönetim web uygulaması.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mert-carli/BerbeRandevu.git"
+  },
+  "keywords": [
+    "pwa",
+    "barber",
+    "randevu",
+    "appointment",
+    "berber",
+    "voice-assistant",
+    "localstorage",
+    "tailwind"
+  ],
+  "author": "Mert Çarlı",
+  "license": "MIT"
+}

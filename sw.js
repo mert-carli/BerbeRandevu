@@ -1,5 +1,5 @@
 // Ramazan Toz PWA Service Worker
-const CACHE_NAME = 'ramazan-toz-v3';
+const CACHE_NAME = 'ramazan-toz-v4';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
