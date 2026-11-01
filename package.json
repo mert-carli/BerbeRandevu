@@ -4,6 +4,7 @@
   "description": "Mobil öncelikli, sesli Türkçe asistanlı, çakışma önleyici ve offline (PWA) destekli berber randevu yönetim web uygulaması.",
   "main": "server.js",
   "scripts": {
+    "build": "echo 'Static build ready'",
     "start": "node server.js",
     "dev": "node server.js"
   },
